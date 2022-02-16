@@ -1,2 +1,2 @@
 # Trigger
-[My image](https://github.com/StasPI/Trigger/tree/master/Other/img/schema.png)
+[Scheme](https://github.com/StasPI/Trigger/tree/master/Other/img/scheme.png)
