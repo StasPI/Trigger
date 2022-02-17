@@ -13,3 +13,4 @@ services:
       - 5800:5672
       # HTTP management UI http://localhost:15800/
       - 15800:15672
+    restart: always
