@@ -1,11 +1,10 @@
-﻿using Abstraction;
+﻿using Entities.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entity.Reaction
 {
-    public class Email : IEntity<int>
+    public class Email : BaseModel
     {
-        public int Id { get; set; }
         [Required]
         public string Address { get; set; }
         public string Copy { get; set; }

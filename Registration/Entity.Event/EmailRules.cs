@@ -1,10 +1,9 @@
-﻿using Abstraction;
+﻿using Entities.Base;
 
 namespace Entity.Event
 {
-    public class EmailRules : IEntity<int>
+    public class EmailRules : BaseModel
     {
-        public int Id { get; set; }
         public string Address { get; set; }
         public string Copy { get; set; }
         public string Subject { get; set; }

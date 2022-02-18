@@ -1,12 +1,10 @@
-﻿using Abstraction;
+﻿using Entities.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entities.Manager
 {
-    public class UseCases : IEntity<int>
+    public class UseCases : BaseModel
     {
-        public int Id { get; set; }
-
         public int UserId { get; set; }
 
         [Required]

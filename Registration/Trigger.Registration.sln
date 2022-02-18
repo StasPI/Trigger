@@ -15,17 +15,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4EE29D81-3AC3-4D56-ACFA-879D2CB16D2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFramework", "EntityFramework\EntityFramework.csproj", "{2B6B59EE-5E81-431B-9484-A4D5460B4EF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFramework", "EntityFramework\EntityFramework.csproj", "{2B6B59EE-5E81-431B-9484-A4D5460B4EF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{F3C95BE7-77E0-4B71-9A9B-D2ED8781EFAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{F3C95BE7-77E0-4B71-9A9B-D2ED8781EFAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Manager", "Entities\Entities.Manager.csproj", "{A4F0E3A4-39FF-4713-8599-E1BE4EB5351D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities.Manager", "Entities\Entities.Manager.csproj", "{A4F0E3A4-39FF-4713-8599-E1BE4EB5351D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstraction", "Abstraction\Abstraction.csproj", "{3F114729-5473-4320-8F07-80B9290E3E16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abstraction", "Abstraction\Abstraction.csproj", "{3F114729-5473-4320-8F07-80B9290E3E16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entity.Event", "Entity.Event\Entity.Event.csproj", "{0D2595E4-FFD3-41AF-A929-EF351B80D4A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entity.Event", "Entity.Event\Entity.Event.csproj", "{0D2595E4-FFD3-41AF-A929-EF351B80D4A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entity.Reaction", "Entity.Reaction\Entity.Reaction.csproj", "{58F1BFDC-92EC-4F92-9015-000BDEC62A73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entity.Reaction", "Entity.Reaction\Entity.Reaction.csproj", "{58F1BFDC-92EC-4F92-9015-000BDEC62A73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Base", "Entities.Base\Entities.Base.csproj", "{826119A1-16A8-4287-96E7-3DFE91B14A30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commands", "Commands\Commands.csproj", "{52E23653-DD8D-429D-8BC1-E8B9B1A1039D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,14 @@ Global
 		{58F1BFDC-92EC-4F92-9015-000BDEC62A73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58F1BFDC-92EC-4F92-9015-000BDEC62A73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58F1BFDC-92EC-4F92-9015-000BDEC62A73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{826119A1-16A8-4287-96E7-3DFE91B14A30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{826119A1-16A8-4287-96E7-3DFE91B14A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{826119A1-16A8-4287-96E7-3DFE91B14A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{826119A1-16A8-4287-96E7-3DFE91B14A30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52E23653-DD8D-429D-8BC1-E8B9B1A1039D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52E23653-DD8D-429D-8BC1-E8B9B1A1039D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52E23653-DD8D-429D-8BC1-E8B9B1A1039D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52E23653-DD8D-429D-8BC1-E8B9B1A1039D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +80,8 @@ Global
 		{3F114729-5473-4320-8F07-80B9290E3E16} = {A66CB772-0300-4244-8EF6-D0033D07FE3B}
 		{0D2595E4-FFD3-41AF-A929-EF351B80D4A8} = {426F4530-C152-4345-9EEA-5528249218FE}
 		{58F1BFDC-92EC-4F92-9015-000BDEC62A73} = {426F4530-C152-4345-9EEA-5528249218FE}
+		{826119A1-16A8-4287-96E7-3DFE91B14A30} = {426F4530-C152-4345-9EEA-5528249218FE}
+		{52E23653-DD8D-429D-8BC1-E8B9B1A1039D} = {BD875ED1-334C-446A-B456-132FCA49EEEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D9A5ECD1-9247-4B33-957B-D427C177ABCE}

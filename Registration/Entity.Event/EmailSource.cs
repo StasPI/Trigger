@@ -1,11 +1,10 @@
-﻿using Abstraction;
+﻿using Entities.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entity.Event
 {
-    public class EmailSource : IEntity<int>
+    public class EmailSource : BaseModel
     {
-        public int Id { get; set; }
         [Required]
         public string Protocol { get; set; }
         [Required]

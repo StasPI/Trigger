@@ -1,0 +1,90 @@
+{
+    "UseCases": {
+        "UserID": 1,
+        "CaseName": "FirstCase",
+        "Cases": [
+            {
+                "EventType": [
+                    {
+                        "Email": [
+                            {
+                                "Source": {
+                                    "Protocol": "smtp",
+                                    "Host": "Host.ru",
+                                    "Login": "Login1",
+                                    "Password": "Password1"
+                                },
+                                "Rules": {
+                                    "Address": null,
+                                    "Copy": null,
+                                    "Subject": null,
+                                    "Body": null,
+                                    "Attachment": null,
+                                    "Outgoing": false,
+                                    "Access": true
+                                }
+                            },
+                            {
+                                "Source": {
+                                    "Protocol": "smtp",
+                                    "Host": "Host.ru",
+                                    "Login": "Login2",
+                                    "Password": "Password2"
+                                },
+                                "Rules": {
+                                    "Address": null,
+                                    "Copy": null,
+                                    "Subject": null,
+                                    "Body": "tBody2",
+                                    "Attachment": null,
+                                    "Outgoing": true,
+                                    "Access": false
+                                }
+                            },
+                            {
+                                "Source": {
+                                    "Protocol": "smtp",
+                                    "Host": "Host.ru",
+                                    "Login": "Login3",
+                                    "Password": "Password3"
+                                },
+                                "Rules": {
+                                    "Address": "bk.ru",
+                                    "Copy": null,
+                                    "Subject": null,
+                                    "Body": "tBody3",
+                                    "Attachment": null,
+                                    "Outgoing": false,
+                                    "Access": false
+                                }
+                            }
+                        ],
+                        "Site": [
+                            {
+                                "Source": {
+                                    "Url": "yandex.ru"
+                                },
+                                "Rules": {
+                                    "Text": "aaaaaaaa"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "ReactionType": [
+                    {
+                        "Email": [
+                            {
+                                "Address": "bk@bk.ru",
+                                "Copy": null,
+                                "Subject": "tSubject",
+                                "Body": "tBody",
+                                "Attachment": null
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

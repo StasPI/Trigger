@@ -1,10 +1,9 @@
-﻿using Abstraction;
+﻿using Entities.Base;
 
 namespace Entities.Manager
 {
-    public class EventType : IEntity<int>
+    public class EventType : BaseModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

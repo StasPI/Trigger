@@ -1,10 +1,9 @@
-﻿using Abstraction;
+﻿using Entities.Base;
 
 namespace Entities.Manager
 {
-    public class ReactionType : IEntity<int>
+    public class ReactionType : BaseModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

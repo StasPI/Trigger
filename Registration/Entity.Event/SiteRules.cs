@@ -1,11 +1,10 @@
-﻿using Abstraction;
+﻿using Entities.Base;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entity.Event
 {
-    public class SiteRules : IEntity<int>
+    public class SiteRules : BaseModel
     {
-        public int Id { get; set; }
         [Required]
         public string Text { get; set; }
     }

@@ -1,10 +1,9 @@
-﻿using Abstraction;
+﻿using Entities.Base;
 
 namespace Entities.Manager
 {
-    public class Cases : IEntity<int>
+    public class Cases : BaseModel
     {
-        public int Id { get; set; }
         public int CaseId { get; set; }
         public virtual List<EventType> EventType { get; set; }
         public int EventSourceID { get; set; }
