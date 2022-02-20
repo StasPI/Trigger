@@ -80,6 +80,13 @@
                                 "Subject": "tSubject",
                                 "Body": "tBody",
                                 "Attachment": null
+                            },
+                            {
+                                "Address": "bbk@bk.ru",
+                                "Copy": null,
+                                "Subject": "tSubject",
+                                "Body": "tBody",
+                                "Attachment": null
                             }
                         ]
                     }
