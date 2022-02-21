@@ -6,11 +6,12 @@ namespace Entities.Manager
     public class UseCases : BaseModel
     {
         public int UserId { get; set; }
-
-        [Required]
-        public virtual List<Cases> Cases { get; set; }
-
         [Required]
         public string CaseName { get; set; }
+
+        [Required]
+        public virtual List<CaseEvent> CaseEvent { get; set; }
+        [Required]
+        public virtual List<CaseReaction> CaseReaction { get; set; }
     }
 }
