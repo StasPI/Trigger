@@ -21,11 +21,15 @@ namespace EntityFramework
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
             Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
-        public async Task<int> SaveChanges()
+        public async Task<int> SaveChangesAsync()
         {
             return await base.SaveChangesAsync();
         }

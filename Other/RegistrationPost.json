@@ -55,6 +55,15 @@
                 "outgoing": false,
                 "access": false
             }
+        },
+        {
+            "eventTypeName": "Site",
+            "source": {
+                "url": "ya.ru"
+            },
+            "rules": {
+                "text": "xz"
+            }
         }
     ],
     "caseReaction": [
@@ -73,26 +82,6 @@
             "subject": "tSubject",
             "body": "tBody",
             "attachment": null
-        }
-    ]
-}
-
-
-
-{
-    "userId": 1,
-    "caseName": "Mycase1",
-    "caseEvent": [
-        {
-            "eventTypeName": "string"
-        },
-        {
-            "eventTypeName": "string"
-        }
-    ],
-    "caseReaction": [
-        {
-            "reactionTypeName": "string"
         }
     ]
 }

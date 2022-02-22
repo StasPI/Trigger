@@ -2,6 +2,7 @@
 using Entity.Event;
 using Entity.Reaction;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EntityFramework
 {
@@ -19,6 +20,7 @@ namespace EntityFramework
         //reaction
         DbSet<Email> Email { get; set; }
         //??
-        Task<int> SaveChanges();
+        DatabaseFacade Database { get; }
+        Task<int> SaveChangesAsync();
     }
 }

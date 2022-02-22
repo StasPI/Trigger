@@ -20,25 +20,26 @@ namespace Implementation
             }
             public async Task<int> Handle(CreateUseCasesCommand command, CancellationToken cancellationToken)
             {
-                UseCases useCases = new UseCases();
-                useCases.UserId = command.UserId;
-                useCases.CaseName = command.CaseName;
-                useCases.CaseEvent = command.CaseEvent;
-
-                foreach (var caseEvent in useCases.CaseEvent)
+                using (var dbContextTransaction = await _context.Database.BeginTransactionAsync(cancellationToken))
                 {
-                    if (caseEvent.EventTypeName == "Email")
+                    UseCases useCases = new UseCases();
+                    useCases.UserId = command.UserId;
+                    useCases.CaseName = command.CaseName;
+                    useCases.CaseEvent = command.CaseEvent;
+
+                    foreach (var caseEvent in useCases.CaseEvent)
                     {
+                        if (caseEvent.EventTypeName == "Email")
+                        {
 
+                        }
                     }
+                    useCases.CaseReaction = command.CaseReaction;
+                    _context.UseCases.Add(useCases);
+                    await _context.SaveChangesAsync();
+                    await dbContextTransaction.CommitAsync(cancellationToken);
+                    return useCases.Id;
                 }
-
-
-
-                useCases.CaseReaction = command.CaseReaction;
-                _context.UseCases.Add(useCases);
-                await _context.SaveChanges();
-                return useCases.Id;
             }
         }
     }
