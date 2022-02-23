@@ -1,7 +1,7 @@
 ﻿using Entities.Base;
 using System.ComponentModel.DataAnnotations;
 
-namespace Entity.Event
+namespace Entities.Event
 {
     public class EmailSource : BaseModel
     {

@@ -1,5 +1,5 @@
+using Commands.Implementation;
 using EntityFramework;
-using Implementation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

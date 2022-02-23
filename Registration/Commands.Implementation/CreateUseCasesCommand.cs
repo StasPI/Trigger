@@ -1,8 +1,9 @@
-﻿using Entities.Manager;
+﻿using CreateCase.Implementation;
+using Entities.Manager;
 using EntityFramework;
 using MediatR;
 
-namespace Implementation
+namespace Commands.Implementation
 {
     public class CreateUseCasesCommand : IRequest<int>
     {
@@ -25,18 +26,19 @@ namespace Implementation
                     UseCases useCases = new UseCases();
                     useCases.UserId = command.UserId;
                     useCases.CaseName = command.CaseName;
-                    useCases.CaseEvent = command.CaseEvent;
+                    await _context.UseCases.AddAsync(useCases);
+                    await _context.SaveChangesAsync(cancellationToken);
 
-                    foreach (var caseEvent in useCases.CaseEvent)
+                    foreach (var caseEvent in command.CaseEvent)
                     {
-                        if (caseEvent.EventTypeName == "Email")
-                        {
-
-                        }
+                        await CreateEvent.Create(_context, cancellationToken, caseEvent, useCases.Id);
                     }
-                    useCases.CaseReaction = command.CaseReaction;
-                    _context.UseCases.Add(useCases);
-                    await _context.SaveChangesAsync();
+
+                    foreach (var caseReaction in command.CaseReaction)
+                    {
+                        await CreateReaction.Create(_context, cancellationToken, caseReaction, useCases.Id);
+                    }
+
                     await dbContextTransaction.CommitAsync(cancellationToken);
                     return useCases.Id;
                 }

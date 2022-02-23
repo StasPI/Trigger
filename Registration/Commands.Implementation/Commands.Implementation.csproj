@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Abstraction\Abstraction.csproj" />
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CreateCase.Implementation\CreateCase.Implementation.csproj" />
     <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
   </ItemGroup>
 

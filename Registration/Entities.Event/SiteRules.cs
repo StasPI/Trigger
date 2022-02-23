@@ -1,11 +1,11 @@
 ﻿using Entities.Base;
 using System.ComponentModel.DataAnnotations;
 
-namespace Entity.Event
+namespace Entities.Event
 {
-    public class SiteSource : BaseModel
+    public class SiteRules : BaseModel
     {
         [Required]
-        public string Url { get; set; }
+        public string Text { get; set; }
     }
 }
