@@ -1,6 +1,6 @@
 ﻿using Entities.Event;
 using Entities.Manager;
-using EntityFramework;
+using EntityFramework.Abstraction;
 using System.Text.Json;
 
 namespace CreateCase.Implementation

@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Abstraction\Abstraction.csproj" />
-    <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
   </ItemGroup>
 
 </Project>

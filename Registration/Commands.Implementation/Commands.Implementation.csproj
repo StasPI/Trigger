@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CreateCase.Implementation\CreateCase.Implementation.csproj" />
-    <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using CreateCase.Implementation;
 using Entities.Manager;
-using EntityFramework;
+using EntityFramework.Abstraction;
 using MediatR;
 
 namespace Commands.Implementation

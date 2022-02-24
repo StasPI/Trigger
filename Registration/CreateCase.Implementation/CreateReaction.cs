@@ -1,6 +1,6 @@
 ﻿using Entities.Manager;
 using Entities.Reaction;
-using EntityFramework;
+using EntityFramework.Abstraction;
 using System.Text.Json;
 
 namespace CreateCase.Implementation
