@@ -1,3 +1,4 @@
+using AutoMapper;
 using Commands.Implementation;
 using EntityFramework.Abstraction;
 using EntityFramework.Implementation;
@@ -12,8 +13,10 @@ var connectionString = builder.Configuration.
                       GetConnectionString("DBConnection");
 
 // Add services to the container.
+builder.Services.AddSingleton<IMapper>(new Mapper(GetMapperConfiguration()));
+
 builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString), ServiceLifetime.Transient);
 
 builder.Services.AddMediatR(typeof(CreateUseCasesCommand).GetTypeInfo().Assembly);
 builder.Services.AddControllers();
@@ -38,3 +41,13 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static MapperConfiguration GetMapperConfiguration()
+{
+    var configuration = new MapperConfiguration(cfg =>
+    {
+        cfg.AddProfile<Mapping.UseCasesMappingsProfile>();
+    });
+    configuration.AssertConfigurationIsValid();
+    return configuration;
+}

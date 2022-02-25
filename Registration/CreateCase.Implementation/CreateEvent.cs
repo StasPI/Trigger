@@ -1,7 +1,6 @@
 ﻿using Entities.Event;
 using Entities.Manager;
 using EntityFramework.Abstraction;
-using System.Text.Json;
 
 namespace CreateCase.Implementation
 {
@@ -14,25 +13,15 @@ namespace CreateCase.Implementation
             switch (_caseEvent.Name)
             {
                 case "Email":
-                    EmailSource emailSource = JsonSerializer.Deserialize<EmailSource>(_caseEvent.Source);
-                    EmailRules emailRules = JsonSerializer.Deserialize<EmailRules>(_caseEvent.Rule);
-                    await _context.EmailSource.AddAsync(emailSource);
-                    await _context.EmailRules.AddAsync(emailRules);
-                    await _context.SaveChangesAsync(cancellationToken);
-                    _sourceId = emailSource.Id;
-                    _ruleId = emailRules.Id;
+                    _sourceId = (await _context.SaveAsyncJsonObject<EmailSource>(cancellationToken, _caseEvent.Source)).Id;
+                    _ruleId = (await _context.SaveAsyncJsonObject<EmailRules>(cancellationToken, _caseEvent.Rule)).Id;
                     break;
                 case "Site":
-                    SiteSource siteSource = JsonSerializer.Deserialize<SiteSource>(_caseEvent.Source);
-                    SiteRules siteRules = JsonSerializer.Deserialize<SiteRules>(_caseEvent.Rule);
-                    await _context.SiteSource.AddAsync(siteSource);
-                    await _context.SiteRules.AddAsync(siteRules);
-                    await _context.SaveChangesAsync(cancellationToken);
-                    _sourceId = siteSource.Id;
-                    _ruleId = siteRules.Id;
+                    _sourceId = (await _context.SaveAsyncJsonObject<SiteSource>(cancellationToken, _caseEvent.Source)).Id;
+                    _ruleId = (await _context.SaveAsyncJsonObject<SiteRules>(cancellationToken, _caseEvent.Rule)).Id;
                     break;
             }
-            
+
             CaseEvent ce = new CaseEvent();
             ce.Name = _caseEvent.Name;
             ce.UseCasesID = _useCasesId;
@@ -40,6 +29,7 @@ namespace CreateCase.Implementation
             ce.RuleId = _ruleId;
             await _context.CaseEvents.AddAsync(ce);
             await _context.SaveChangesAsync(cancellationToken);
+
         }
     }
 }

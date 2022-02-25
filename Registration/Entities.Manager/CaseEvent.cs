@@ -16,7 +16,6 @@ namespace Entities.Manager
         public int SourceId { get; set; }
         public int RuleId { get; set; }
 
-        //[NotMapped]
         public int UseCasesID { get; set; }
 
         [NotMapped]

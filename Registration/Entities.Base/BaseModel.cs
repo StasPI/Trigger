@@ -1,4 +1,4 @@
-﻿using Abstraction;
+﻿using Entities.Abstraction;
 using System.ComponentModel.DataAnnotations;
 
 namespace Entities.Base

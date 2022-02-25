@@ -1,7 +1,6 @@
 ﻿using Entities.Manager;
 using Entities.Reaction;
 using EntityFramework.Abstraction;
-using System.Text.Json;
 
 namespace CreateCase.Implementation
 {
@@ -13,10 +12,7 @@ namespace CreateCase.Implementation
             switch (_caseReaction.Name)
             {
                 case "Email":
-                    EmailDestination emailDestination = JsonSerializer.Deserialize<EmailDestination>(_caseReaction.Destination);
-                    await _context.EmailDestination.AddAsync(emailDestination);
-                    await _context.SaveChangesAsync(cancellationToken);
-                    _destinationId = emailDestination.Id;
+                    _destinationId = (await _context.SaveAsyncJsonObject<EmailDestination>(cancellationToken, _caseReaction.Destination)).Id;
                     break;
             }
 

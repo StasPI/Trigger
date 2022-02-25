@@ -8,13 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="MediatR" Version="10.0.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Contracts.Implementation\Contracts.Implementation.csproj" />
-    <ProjectReference Include="..\CreateCase.Implementation\CreateCase.Implementation.csproj" />
+    <ProjectReference Include="..\Entities.Manager\Entities.Manager.csproj" />
   </ItemGroup>
 
 </Project>
