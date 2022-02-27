@@ -13,6 +13,7 @@ namespace Contracts.Manager
         public string Name { get; set; }
         [JsonIgnore]
         public int DestinationId { get; set; }
+        [JsonIgnore]
         public int UseCasesID { get; set; }
 
         [NotMapped]

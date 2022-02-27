@@ -17,6 +17,7 @@ namespace Contracts.Manager
         public int SourceId { get; set; }
         [JsonIgnore]
         public int RuleId { get; set; }
+        [JsonIgnore]
         public int UseCasesID { get; set; }
 
         [NotMapped]

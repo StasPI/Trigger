@@ -26,14 +26,14 @@ namespace Case.Implementation
             switch (caseReactionDto.Name)
             {
                 case "Email":
-                    caseReactionDto.Destination = await GetDestinationJsonObjectAsync<EmailDestination, EmailDestinationDto>(caseReactionDto, cancellationToken);
+                    caseReactionDto.Destination = await GetDestinationJsonObjectAsync<EmailDestination, EmailDestinationDto>(caseReactionDto.DestinationId, cancellationToken);
                     break;
             }
         }
 
-        private async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(CaseReactionDto caseEventDto, CancellationToken cancellationToken) where Table : class, IEntity
+        private async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(int DestinationId, CancellationToken cancellationToken) where Table : class, IEntity
         {
-            Table source = await _context.Set<Table>().Where(x => x.Id == caseEventDto.DestinationId).FirstAsync(cancellationToken);
+            Table source = await _context.Set<Table>().Where(x => x.Id == DestinationId).FirstAsync(cancellationToken);
             TableDto dto = _mapper.Map<TableDto>(source);
             string sSource = JsonSerializer.Serialize(dto);
             return JsonSerializer.Deserialize<JsonObject>(sSource);

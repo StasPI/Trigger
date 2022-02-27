@@ -9,7 +9,8 @@ namespace Mapping.Manager
         public CaseReactionMappingsProfile()
         {
             CreateMap<CaseReaction, CaseReactionDto>()
-                .ForMember(d => d.Destination, map => map.Ignore());
+                .ForMember(d => d.Destination, map => map.Ignore())
+                .ForMember(x => x.UseCasesID, map => map.Ignore());
 
             CreateMap<CaseReactionDto, CaseReaction>()
                 .ForMember(d => d.Id, map => map.Ignore())
