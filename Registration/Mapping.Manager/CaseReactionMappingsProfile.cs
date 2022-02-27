@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
-using Contracts.Implementation;
+using Contracts.Manager;
 using Entities.Manager;
 
-namespace Mapping
+namespace Mapping.Manager
 {
-    public class UseCasesMappingsProfile : Profile
+    public class CaseReactionMappingsProfile : Profile
     {
-        public UseCasesMappingsProfile()
+        public CaseReactionMappingsProfile()
         {
-            CreateMap<UseCases, UseCasesDto>();
+            CreateMap<CaseReaction, CaseReactionDto>()
+                .ForMember(d => d.Destination, map => map.Ignore());
 
-            CreateMap<UseCasesDto, UseCases>()
+            CreateMap<CaseReactionDto, CaseReaction>()
                 .ForMember(d => d.Id, map => map.Ignore())
                 .ForMember(d => d.DateCreated, map => map.Ignore())
                 .ForMember(d => d.DateUpdated, map => map.Ignore())

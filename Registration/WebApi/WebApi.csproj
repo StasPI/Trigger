@@ -15,7 +15,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Commands.Implementation\Commands.Implementation.csproj" />
     <ProjectReference Include="..\EntityFramework.Implementation\EntityFramework.Implementation.csproj" />
-    <ProjectReference Include="..\Mapping\Mapping.csproj" />
+    <ProjectReference Include="..\Mapping.Event\Mapping.Event.csproj" />
+    <ProjectReference Include="..\Mapping.Manager\Mapping.Manager.csproj" />
+    <ProjectReference Include="..\Mapping.Reaction\Mapping.Reaction.csproj" />
   </ItemGroup>
 
 </Project>

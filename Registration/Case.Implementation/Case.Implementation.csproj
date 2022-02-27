@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts.Event\Contracts.Event.csproj" />
+    <ProjectReference Include="..\Contracts.Manager\Contracts.Manager.csproj" />
+    <ProjectReference Include="..\Contracts.Reaction\Contracts.Reaction.csproj" />
     <ProjectReference Include="..\EntityFramework.Abstraction\EntityFramework.Abstraction.csproj" />
   </ItemGroup>
 

@@ -2,7 +2,7 @@
 
 namespace Entities.Event
 {
-    public class EmailRules : BaseModel
+    public class EmailRule : BaseModel
     {
         public string? Address { get; set; }
         public string? Copy { get; set; }

@@ -15,9 +15,9 @@ namespace EntityFramework.Abstraction
         DbSet<CaseReaction> CaseReaction { get; set; }
 
         //event
-        DbSet<EmailRules> EmailRules { get; set; }
+        DbSet<EmailRule> EmailRule { get; set; }
         DbSet<EmailSource> EmailSource { get; set; }
-        DbSet<SiteRules> SiteRules { get; set; }
+        DbSet<SiteRule> SiteRule { get; set; }
         DbSet<SiteSource> SiteSource { get; set; }
 
         //reaction
@@ -28,6 +28,8 @@ namespace EntityFramework.Abstraction
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
         IDatabaseContext NewContext();
-        Task<T> SaveAsyncJsonObject<T>(CancellationToken cancellationToken, JsonObject jsonObject) where T : class;
+        Task<T> SaveAsyncJsonObject<T>(JsonObject jsonObject, CancellationToken cancellationToken) where T : class;
+        //Task<DbSet<T>> Set<T>() where T : class;
+        public DbSet<T> Set<T>() where T : class;
     }
 }

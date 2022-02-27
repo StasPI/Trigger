@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Contracts.Implementation;
+using Contracts.Manager;
 using CreateCase.Implementation;
 using Entities.Manager;
 using EntityFramework.Abstraction;
@@ -14,48 +14,49 @@ namespace Commands.Implementation
         {
             private readonly IDatabaseContext _context;
             private readonly IMapper _mapper;
+            private readonly CreateEvent _createEvent;
+            private readonly CreateReaction _createReaction;
+            private readonly UseCasesDto _useCasesDto;
+
             public CreateUseCasesCommandHandler(IDatabaseContext context, IMapper mapper)
             {
                 _context = context;
                 _mapper = mapper;
+                _createEvent = new CreateEvent(_context, _mapper);
+                _createReaction = new CreateReaction(_context, _mapper);
+                _useCasesDto = new UseCasesDto();
             }
             public async Task<int> Handle(CreateUseCasesCommand command, CancellationToken cancellationToken)
             {
-                using (IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync(cancellationToken))
-                {
-                    UseCasesDto useCasesDto = new UseCasesDto();
-                    useCasesDto.UserId = command.UserId;
-                    useCasesDto.CaseName = command.CaseName;
+                using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+                _useCasesDto.UserId = command.UserId;
+                _useCasesDto.CaseName = command.CaseName;
 
-                    UseCases useCases = _mapper.Map<UseCases>(useCasesDto);
+                UseCases useCases = _mapper.Map<UseCases>(_useCasesDto);
 
-                    await _context.UseCases.AddAsync(useCases);
-                    await _context.SaveChangesAsync(cancellationToken);
+                await _context.UseCases.AddAsync(useCases);
+                await _context.SaveChangesAsync(cancellationToken);
 
-                    //await Task.WhenAll(
-                    //    EventAsync(command.CaseEvent, cancellationToken, useCases.Id),
-                    //    RuleAsync(command.CaseReaction, cancellationToken, useCases.Id));
-                    await EventAsync(command.CaseEvent, cancellationToken, useCases.Id);
-                    await RuleAsync(command.CaseReaction, cancellationToken, useCases.Id);
+                await EventAsync(command.CaseEvent, useCases.Id, cancellationToken);
+                await RuleAsync(command.CaseReaction, useCases.Id, cancellationToken);
 
-                    await dbContextTransaction.CommitAsync(cancellationToken);
-                    return useCases.Id;
-                }
+                await dbContextTransaction.CommitAsync(cancellationToken);
+                return useCases.Id;
             }
 
-            private async Task EventAsync(List<CaseEvent> command, CancellationToken cancellationToken,int useCasesId)
+            private async Task EventAsync(List<CaseEventDto> command,int useCasesId, CancellationToken cancellationToken)
             {
                 foreach (var caseEvent in command)
                 {
-                    await CreateEvent.Create(_context, cancellationToken, caseEvent, useCasesId);
+                    await _createEvent.Create(caseEvent, useCasesId, cancellationToken);
                 }
             }
 
-            private async Task RuleAsync(List<CaseReaction> command, CancellationToken cancellationToken, int useCasesId)
+            private async Task RuleAsync(List<CaseReactionDto> command, int useCasesId, CancellationToken cancellationToken)
             {
                 foreach (var caseReaction in command)
                 {
-                    await CreateReaction.Create(_context, cancellationToken, caseReaction, useCasesId);
+                    await _createReaction.Create(caseReaction, useCasesId, cancellationToken);
                 }
             }
         }

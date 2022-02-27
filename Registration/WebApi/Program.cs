@@ -46,7 +46,14 @@ static MapperConfiguration GetMapperConfiguration()
 {
     var configuration = new MapperConfiguration(cfg =>
     {
-        cfg.AddProfile<Mapping.UseCasesMappingsProfile>();
+        cfg.AddProfile<Mapping.Manager.UseCasesMappingsProfile>();
+        cfg.AddProfile<Mapping.Manager.CaseReactionMappingsProfile>();
+        cfg.AddProfile<Mapping.Manager.CaseEventMappingsProfile>();
+        cfg.AddProfile<Mapping.Event.EmailSourceMappingsProfile>();
+        cfg.AddProfile<Mapping.Event.SiteSourceMappingsProfile>();
+        cfg.AddProfile<Mapping.Event.EmailRuleMappingsProfile>();
+        cfg.AddProfile<Mapping.Event.SiteRuleMappingsProfile>();
+        cfg.AddProfile<Mapping.Reaction.EmailDestinationMappingsProfile>();
     });
     configuration.AssertConfigurationIsValid();
     return configuration;

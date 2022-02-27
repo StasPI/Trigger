@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Entities.Event
 {
-    public class SiteRules : BaseModel
+    public class SiteRule : BaseModel
     {
         [Required]
         public string Text { get; set; }

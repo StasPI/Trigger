@@ -17,9 +17,9 @@ namespace EntityFramework.Implementation
         public DbSet<CaseReaction> CaseReaction { get; set; }
 
         //event
-        public DbSet<EmailRules> EmailRules { get; set; }
+        public DbSet<EmailRule> EmailRule { get; set; }
         public DbSet<EmailSource> EmailSource { get; set; }
-        public DbSet<SiteRules> SiteRules { get; set; }
+        public DbSet<SiteRule> SiteRule { get; set; }
         public DbSet<SiteSource> SiteSource { get; set; }
 
         //reaction
@@ -59,12 +59,17 @@ namespace EntityFramework.Implementation
             return dbContext;
         }
 
-        public async Task<T> SaveAsyncJsonObject<T>(CancellationToken cancellationToken, JsonObject jsonObject) where T : class
+        public async Task<T> SaveAsyncJsonObject<T>(JsonObject jsonObject, CancellationToken cancellationToken = default) where T : class
         {
             T gClass = JsonSerializer.Deserialize<T>(jsonObject);
             await AddAsync<T>(gClass);
             await SaveChangesAsync(cancellationToken);
             return gClass;
+        }
+
+        public DbSet<T> Set<T>() where T : class
+        {
+            return base.Set<T>();
         }
     }
 }
