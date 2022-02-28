@@ -5,6 +5,7 @@ using EntityFramework.Implementation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using WebApi.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
 
 builder.Services.AddMediatR(typeof(CreateUseCasesCommand).GetTypeInfo().Assembly);
 builder.Services.AddControllers();
+
+builder.Services.AddHostedService<WorkerManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
