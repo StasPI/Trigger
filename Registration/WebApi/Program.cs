@@ -9,8 +9,6 @@ using WebApi.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
 var connectionString = builder.Configuration.
                       GetConnectionString("DBConnection");
 

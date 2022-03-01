@@ -10,7 +10,6 @@ namespace CreateCase.Implementation
     {
         private readonly IDatabaseContext _context;
         private readonly IMapper _mapper;
-
         public CreateEvent(IDatabaseContext context, IMapper mapper)
         {
             _context = context;
@@ -32,7 +31,7 @@ namespace CreateCase.Implementation
             }
 
             CaseEvent caseEvent = _mapper.Map<CaseEvent>(caseEventDto);
-            await _context.CaseEvents.AddAsync(caseEvent);
+            await _context.CaseEvents.AddAsync(caseEvent, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
         }
     }

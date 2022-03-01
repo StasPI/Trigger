@@ -14,7 +14,6 @@ namespace Case.Implementation
     {
         private readonly IDatabaseContext _context;
         private readonly IMapper _mapper;
-
         public GetEvent(IDatabaseContext context, IMapper mapper)
         {
             _context = context;
@@ -22,7 +21,6 @@ namespace Case.Implementation
         }
         public async Task Get(CaseEventDto caseEventDto, CancellationToken cancellationToken)
         {
-            
             switch (caseEventDto.Name)
             {
                 case "Email":
@@ -35,7 +33,6 @@ namespace Case.Implementation
                     break;
             }
         }
-
         private async Task<JsonObject> GetSourceJsonObjectAsync<Table, TableDto>(int SourceId, CancellationToken cancellationToken) where Table : class, IEntity
         {
             Table source = await _context.Set<Table>().Where(x => x.Id == SourceId).FirstAsync(cancellationToken);
@@ -43,7 +40,6 @@ namespace Case.Implementation
             string sSource = JsonSerializer.Serialize(dto);
             return JsonSerializer.Deserialize<JsonObject>(sSource);
         }
-
         private async Task<JsonObject> GetRuleJsonObjectAsync<Table, TableDto>(int RuleId, CancellationToken cancellationToken) where Table : class, IEntity
         {
             Table rule = await _context.Set<Table>().Where(x => x.Id == RuleId).FirstAsync(cancellationToken);

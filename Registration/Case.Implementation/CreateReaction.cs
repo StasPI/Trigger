@@ -10,7 +10,6 @@ namespace CreateCase.Implementation
     {
         private readonly IDatabaseContext _context;
         private readonly IMapper _mapper;
-
         public CreateReaction(IDatabaseContext context, IMapper mapper)
         {
             _context = context;
@@ -27,7 +26,7 @@ namespace CreateCase.Implementation
             caseReactionDto.UseCasesID = useCasesId;
             CaseReaction caseReaction = _mapper.Map<CaseReaction>(caseReactionDto);
 
-            await _context.CaseReaction.AddAsync(caseReaction);
+            await _context.CaseReaction.AddAsync(caseReaction, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
         }
     }

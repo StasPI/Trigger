@@ -14,13 +14,11 @@ namespace Case.Implementation
     {
         private readonly IDatabaseContext _context;
         private readonly IMapper _mapper;
-
         public GetReaction(IDatabaseContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
-
         public async Task Get(CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
         {
             switch (caseReactionDto.Name)
@@ -30,7 +28,6 @@ namespace Case.Implementation
                     break;
             }
         }
-
         private async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(int DestinationId, CancellationToken cancellationToken) where Table : class, IEntity
         {
             Table source = await _context.Set<Table>().Where(x => x.Id == DestinationId).FirstAsync(cancellationToken);

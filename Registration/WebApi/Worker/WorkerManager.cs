@@ -23,6 +23,7 @@ namespace WebApi.Worker
             {
                 using (var scope = _scopeFactory.CreateScope())
                 {
+                    
                     _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
