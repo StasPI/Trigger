@@ -5,14 +5,15 @@ namespace WebApi.Worker
 {
     public class WorkerManager : BackgroundService
     {
+        IServiceScopeFactory _scopeFactory;
+        private IDatabaseContext _context;
         private readonly ILogger<WorkerManager> _logger;
-        private readonly IDatabaseContext _context;
         private readonly IMapper _mapper;
 
-        public WorkerManager(ILogger<WorkerManager> logger, IDatabaseContext context, IMapper mapper)
+        public WorkerManager(ILogger<WorkerManager> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
         {
+            _scopeFactory = scopeFactory;
             _logger = logger;
-            _context = context;
             _mapper = mapper;
         }
 
@@ -20,9 +21,13 @@ namespace WebApi.Worker
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-                await Task.Delay(1000, stoppingToken);
+                    await Task.Delay(1000, stoppingToken);
+                }
             }
         }
     }

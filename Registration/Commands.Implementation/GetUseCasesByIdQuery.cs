@@ -5,6 +5,7 @@ using Entities.Manager;
 using EntityFramework.Abstraction;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Commands.Implementation
 {
@@ -13,31 +14,39 @@ namespace Commands.Implementation
         public int Id { get; set; }
         public class GetUseCasesByIdQueryHandler : IRequestHandler<GetUseCasesByIdQuery, UseCasesDto>
         {
-            private readonly IDatabaseContext _context;
-            private readonly IMapper _mapper;
-            private readonly GetEvent _getEvent;
-            private readonly GetReaction _getReaction;
-            public GetUseCasesByIdQueryHandler(IDatabaseContext context, IMapper mapper)
+            readonly IServiceScopeFactory _scopeFactory;
+            private IDatabaseContext _context;
+            private IMapper _mapper;
+            private GetEvent _getEvent;
+            private GetReaction _getReaction;
+            public GetUseCasesByIdQueryHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
             {
-                _context = context;
+                _scopeFactory = scopeFactory;
                 _mapper = mapper;
-                _getEvent = new GetEvent(_context, _mapper);
-                _getReaction = new GetReaction(_context, _mapper);
+
             }
+
             public async Task<UseCasesDto> Handle(GetUseCasesByIdQuery query, CancellationToken cancellationToken)
             {
-                UseCases useCases = await _context.UseCases.Where(x => x.Id == query.Id).FirstAsync(cancellationToken);
-                useCases.CaseEvent = await _context.CaseEvents.Where(x => x.UseCasesID == useCases.Id).ToListAsync(cancellationToken);
-                useCases.CaseReaction = await _context.CaseReaction.Where(x => x.UseCasesID == useCases.Id).ToListAsync(cancellationToken);
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+                    _getEvent = new GetEvent(_context, _mapper);
+                    _getReaction = new GetReaction(_context, _mapper);
 
-                UseCasesDto useCasesDto = _mapper.Map<UseCasesDto>(useCases);
+                    UseCases useCases = await _context.UseCases.Where(x => x.Id == query.Id).FirstAsync(cancellationToken);
+                    useCases.CaseEvent = await _context.CaseEvents.Where(x => x.UseCasesID == useCases.Id).ToListAsync(cancellationToken);
+                    useCases.CaseReaction = await _context.CaseReaction.Where(x => x.UseCasesID == useCases.Id).ToListAsync(cancellationToken);
 
-                await EventAsync(useCasesDto.CaseEvent, cancellationToken);
-                await ReactionAsync(useCasesDto.CaseReaction, cancellationToken);
+                    UseCasesDto useCasesDto = _mapper.Map<UseCasesDto>(useCases);
 
-                //if (useCases == null) return null;
+                    await EventAsync(useCasesDto.CaseEvent, cancellationToken);
+                    await ReactionAsync(useCasesDto.CaseReaction, cancellationToken);
 
-                return useCasesDto;
+                    //if (useCases == null) return null;
+
+                    return useCasesDto;
+                }
             }
 
             private async Task EventAsync(List<CaseEventDto> caseEvents, CancellationToken cancellationToken)

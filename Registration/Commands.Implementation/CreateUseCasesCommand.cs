@@ -5,6 +5,7 @@ using Entities.Manager;
 using EntityFramework.Abstraction;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Commands.Implementation
 {
@@ -12,36 +13,42 @@ namespace Commands.Implementation
     {
         public class CreateUseCasesCommandHandler : IRequestHandler<CreateUseCasesCommand, int>
         {
-            private readonly IDatabaseContext _context;
-            private readonly IMapper _mapper;
-            private readonly CreateEvent _createEvent;
-            private readonly CreateReaction _createReaction;
-            private readonly UseCasesDto _useCasesDto;
+            readonly IServiceScopeFactory _scopeFactory;
+            private IDatabaseContext _context;
+            private IMapper _mapper;
+            private CreateEvent _createEvent;
+            private CreateReaction _createReaction;
+            private UseCasesDto _useCasesDto;
 
-            public CreateUseCasesCommandHandler(IDatabaseContext context, IMapper mapper)
+            public CreateUseCasesCommandHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
             {
-                _context = context;
+                _scopeFactory = scopeFactory;
                 _mapper = mapper;
-                _createEvent = new CreateEvent(_context, _mapper);
-                _createReaction = new CreateReaction(_context, _mapper);
                 _useCasesDto = new UseCasesDto();
             }
+
             public async Task<int> Handle(CreateUseCasesCommand command, CancellationToken cancellationToken)
             {
-                using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-                _useCasesDto.UserId = command.UserId;
-                _useCasesDto.CaseName = command.CaseName;
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+                    _createEvent = new CreateEvent(_context, _mapper);
+                    _createReaction = new CreateReaction(_context, _mapper);
+                    using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+                    _useCasesDto.UserId = command.UserId;
+                    _useCasesDto.CaseName = command.CaseName;
 
-                UseCases useCases = _mapper.Map<UseCases>(_useCasesDto);
+                    UseCases useCases = _mapper.Map<UseCases>(_useCasesDto);
 
-                await _context.UseCases.AddAsync(useCases);
-                await _context.SaveChangesAsync(cancellationToken);
+                    await _context.UseCases.AddAsync(useCases);
+                    await _context.SaveChangesAsync(cancellationToken);
 
-                await EventAsync(command.CaseEvent, useCases.Id, cancellationToken);
-                await RuleAsync(command.CaseReaction, useCases.Id, cancellationToken);
+                    await EventAsync(command.CaseEvent, useCases.Id, cancellationToken);
+                    await RuleAsync(command.CaseReaction, useCases.Id, cancellationToken);
 
-                await dbContextTransaction.CommitAsync(cancellationToken);
-                return useCases.Id;
+                    await dbContextTransaction.CommitAsync(cancellationToken);
+                    return useCases.Id;
+                }
             }
 
             private async Task EventAsync(List<CaseEventDto> command,int useCasesId, CancellationToken cancellationToken)

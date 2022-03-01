@@ -25,10 +25,8 @@ namespace EntityFramework.Implementation
         //reaction
         public DbSet<EmailDestination> EmailDestination { get; set; }
 
-        private readonly DbContextOptions<DatabaseContext> _options;
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
-            _options = options;
             //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
@@ -50,13 +48,6 @@ namespace EntityFramework.Implementation
         public async Task AddAsync<T>(T Item) where T : class
         {
             await base.Set<T>().AddAsync(Item);
-        }
-
-        public IDatabaseContext NewContext()
-        {
-            IDatabaseContext dbContext = new DatabaseContext(_options);
-
-            return dbContext;
         }
 
         public async Task<T> SaveAsyncJsonObject<T>(JsonObject jsonObject, CancellationToken cancellationToken = default) where T : class
