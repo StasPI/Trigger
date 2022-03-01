@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Worker.Implementation
 {
-    internal class Send
+    public class SendMessages
     {
     }
 }

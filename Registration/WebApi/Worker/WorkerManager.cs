@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using EntityFramework.Abstraction;
+using Worker.Implementation;
 
 namespace WebApi.Worker
 {
     public class WorkerManager : BackgroundService
     {
-        IServiceScopeFactory _scopeFactory;
-        private IDatabaseContext _context;
+        readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<WorkerManager> _logger;
         private readonly IMapper _mapper;
 
@@ -17,18 +17,17 @@ namespace WebApi.Worker
             _mapper = mapper;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                using (var scope = _scopeFactory.CreateScope())
-                {
-                    
-                    _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                using var scope = _scopeFactory.CreateScope();
+                IDatabaseContext context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+                NotSentMessages worker = new(context);
 
-                    await Task.Delay(1000, stoppingToken);
-                }
+                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+
+                await Task.Delay(1000, cancellationToken);
             }
         }
     }

@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Mapping.Event\Mapping.Event.csproj" />
     <ProjectReference Include="..\Mapping.Manager\Mapping.Manager.csproj" />
     <ProjectReference Include="..\Mapping.Reaction\Mapping.Reaction.csproj" />
+    <ProjectReference Include="..\Worker.Implementation\Worker.Implementation.csproj" />
   </ItemGroup>
 
 </Project>

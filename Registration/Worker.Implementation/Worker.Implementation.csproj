@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts.Manager\Contracts.Manager.csproj" />
+    <ProjectReference Include="..\EntityFramework.Abstraction\EntityFramework.Abstraction.csproj" />
+  </ItemGroup>
+
 </Project>
