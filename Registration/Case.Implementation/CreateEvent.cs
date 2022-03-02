@@ -29,7 +29,6 @@ namespace CreateCase.Implementation
                     caseEventDto.RuleId = (await _context.SaveAsyncJsonObject<SiteRule>(caseEventDto.Rule, cancellationToken)).Id;
                     break;
             }
-
             CaseEvent caseEvent = _mapper.Map<CaseEvent>(caseEventDto);
             await _context.CaseEvents.AddAsync(caseEvent, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);

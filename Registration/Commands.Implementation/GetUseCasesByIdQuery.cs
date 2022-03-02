@@ -15,16 +15,14 @@ namespace Commands.Implementation
         {
             readonly IServiceScopeFactory _scopeFactory;
             private readonly IMapper _mapper;
-
             public GetUseCasesByIdQueryHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
             {
                 _scopeFactory = scopeFactory;
                 _mapper = mapper;
             }
-
             public async Task<UseCasesDto> Handle(GetUseCasesByIdQuery query, CancellationToken cancellationToken)
             {
-                using var scope = _scopeFactory.CreateScope();
+                using IServiceScope scope = _scopeFactory.CreateScope();
                 IDatabaseContext context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
 
                 UseCases useCases = await context.UseCases.Where(x => x.Id == query.Id).FirstAsync(cancellationToken);

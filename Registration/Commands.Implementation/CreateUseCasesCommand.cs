@@ -16,17 +16,15 @@ namespace Commands.Implementation
             readonly IServiceScopeFactory _scopeFactory;
             private readonly IMapper _mapper;
             private readonly UseCasesDto _useCasesDto;
-
             public CreateUseCasesCommandHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
             {
                 _scopeFactory = scopeFactory;
                 _mapper = mapper;
                 _useCasesDto = new UseCasesDto();
             }
-
             public async Task<int> Handle(CreateUseCasesCommand command, CancellationToken cancellationToken)
             {
-                using var scope = _scopeFactory.CreateScope();
+                using IServiceScope scope = _scopeFactory.CreateScope();
                 IDatabaseContext context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                 using IDbContextTransaction dbContextTransaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
@@ -44,20 +42,18 @@ namespace Commands.Implementation
                 await dbContextTransaction.CommitAsync(cancellationToken);
                 return useCases.Id;
             }
-
             private async Task EventAsync(List<CaseEventDto> command, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
             {
                 CreateEvent createEvent = new(context, _mapper);
-                foreach (var caseEvent in command)
+                foreach (CaseEventDto caseEvent in command)
                 {
                     await createEvent.Create(caseEvent, useCasesId, cancellationToken);
                 }
             }
-
             private async Task ReactionAsync(List<CaseReactionDto> command, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
             {
                 CreateReaction createReaction = new(context, _mapper);
-                foreach (var caseReaction in command)
+                foreach (CaseReactionDto caseReaction in command)
                 {
                     await createReaction.Create(caseReaction, useCasesId, cancellationToken);
                 }
