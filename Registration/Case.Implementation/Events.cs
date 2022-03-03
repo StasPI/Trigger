@@ -10,9 +10,25 @@ using System.Text.Json.Nodes;
 
 namespace Case.Implementation
 {
-    public static class GetEvent
+    public static class Events
     {
-        public static async Task Get(IDatabaseContext context, IMapper mapper, CaseEventDto caseEventDto, CancellationToken cancellationToken)
+        public static async Task<CaseEventDto> CreateCaseEventAsync(IDatabaseContext context, CaseEventDto caseEventDto, int useCasesId, CancellationToken cancellationToken)
+        {
+            caseEventDto.UseCasesID = useCasesId;
+            switch (caseEventDto.Name)
+            {
+                case "Email":
+                    caseEventDto.SourceId = (await context.SaveAsyncJsonObject<EmailSource>(caseEventDto.Source, cancellationToken)).Id;
+                    caseEventDto.RuleId = (await context.SaveAsyncJsonObject<EmailRule>(caseEventDto.Rule, cancellationToken)).Id;
+                    break;
+                case "Site":
+                    caseEventDto.SourceId = (await context.SaveAsyncJsonObject<SiteSource>(caseEventDto.Source, cancellationToken)).Id;
+                    caseEventDto.RuleId = (await context.SaveAsyncJsonObject<SiteRule>(caseEventDto.Rule, cancellationToken)).Id;
+                    break;
+            }
+            return caseEventDto;
+        }
+        public static async Task FillCaseEventAsync(IDatabaseContext context, IMapper mapper, CaseEventDto caseEventDto, CancellationToken cancellationToken)
         {
             switch (caseEventDto.Name)
             {

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Case.Implementation;
 using Contracts.Manager;
-using CreateCase.Implementation;
 using Entities.Manager;
 using EntityFramework.Abstraction;
 using MediatR;
@@ -48,7 +48,7 @@ namespace Commands.Implementation
                 List<CaseEventDto> casesEventDto = new();
                 foreach (CaseEventDto commandCaseEvent in commandCasesEvent)
                 {
-                    casesEventDto.Add(await CreateEvent.Create(context, commandCaseEvent, useCasesId, cancellationToken));
+                    casesEventDto.Add(await Events.CreateCaseEventAsync(context, commandCaseEvent, useCasesId, cancellationToken));
                 }
                 List<CaseEvent> caseEvent = _mapper.Map<List<CaseEvent>>(casesEventDto);
                 await context.CaseEvents.AddRangeAsync(caseEvent, cancellationToken);
@@ -58,7 +58,7 @@ namespace Commands.Implementation
                 List<CaseReactionDto> caseReactionDto = new();
                 foreach (CaseReactionDto commandCaseReaction in commandCasesReaction)
                 {
-                    caseReactionDto.Add(await CreateReaction.Create(context, commandCaseReaction, useCasesId, cancellationToken));
+                    caseReactionDto.Add(await Reactions.CreateCaseReactionAsync(context, commandCaseReaction, useCasesId, cancellationToken));
                 }
                 List<CaseReaction> caseReaction = _mapper.Map<List<CaseReaction>>(caseReactionDto);
                 await context.CaseReaction.AddRangeAsync(caseReaction, cancellationToken);

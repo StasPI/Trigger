@@ -40,14 +40,14 @@ namespace Commands.Implementation
             {
                 foreach (CaseEventDto caseEvent in caseEvents)
                 {
-                    await GetEvent.Get(context, _mapper, caseEvent, cancellationToken);
+                    await Events.FillCaseEventAsync(context, _mapper, caseEvent, cancellationToken);
                 }
             }
             private async Task ReactionAsync(List<CaseReactionDto> caseReactions, IDatabaseContext context, CancellationToken cancellationToken)
             {
                 foreach (CaseReactionDto caseReaction in caseReactions)
                 {
-                    await GetReaction.Get(context, _mapper, caseReaction, cancellationToken);
+                    await Reactions.FillaseReactionAsync(context, _mapper, caseReaction, cancellationToken);
                 }
             }
         }

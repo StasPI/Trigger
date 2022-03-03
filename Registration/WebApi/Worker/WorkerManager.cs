@@ -23,22 +23,22 @@ namespace WebApi.Worker
                 using IServiceScope scope = _scopeFactory.CreateScope();
                 IDatabaseContext context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
 
-                NotSentMessages worker = new(context, _mapper);
-                List<UseCasesDto> cEvent = await worker.GetEventAsync(cancellationToken);
-                List<UseCasesDto> cReaction = await worker.GetReactionAsync(cancellationToken);
+                NotSentMessages notSentMessages = new(context, _mapper);
+                List<UseCasesDto> casesEvent = await notSentMessages.GetEventAsync(cancellationToken);
+                List<UseCasesDto> casesReaction = await notSentMessages.GetReactionAsync(cancellationToken);
 
-                if (cEvent != null)
+                if (casesEvent != null)
                 {
-                    Console.WriteLine("cEvent not null!");
+                    Console.WriteLine("casesEvent");
                 }
-                if (cReaction != null)
+                if (casesReaction != null)
                 {
-                    Console.WriteLine("cEvent not null!");
+                    Console.WriteLine("casesReaction");
                 }
 
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-                await Task.Delay(1000, cancellationToken);
+                await Task.Delay(10000, cancellationToken);
             }
         }
     }

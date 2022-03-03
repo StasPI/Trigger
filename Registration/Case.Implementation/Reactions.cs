@@ -10,9 +10,20 @@ using System.Text.Json.Nodes;
 
 namespace Case.Implementation
 {
-    public static class GetReaction
+    public static class Reactions
     {
-        public static async Task Get(IDatabaseContext context, IMapper mapper, CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
+        public static async Task<CaseReactionDto> CreateCaseReactionAsync(IDatabaseContext context, CaseReactionDto caseReactionDto, int useCasesId, CancellationToken cancellationToken)
+        {
+            caseReactionDto.UseCasesID = useCasesId;
+            switch (caseReactionDto.Name)
+            {
+                case "Email":
+                    caseReactionDto.DestinationId = (await context.SaveAsyncJsonObject<EmailDestination>(caseReactionDto.Destination, cancellationToken)).Id;
+                    break;
+            }
+            return caseReactionDto;
+        }
+        public static async Task FillaseReactionAsync(IDatabaseContext context, IMapper mapper, CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
         {
             switch (caseReactionDto.Name)
             {
