@@ -10,40 +10,33 @@ using System.Text.Json.Nodes;
 
 namespace Case.Implementation
 {
-    public class GetEvent
+    public static class GetEvent
     {
-        private readonly IDatabaseContext _context;
-        private readonly IMapper _mapper;
-        public GetEvent(IDatabaseContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-        public async Task Get(CaseEventDto caseEventDto, CancellationToken cancellationToken)
+        public static async Task Get(IDatabaseContext context, IMapper mapper, CaseEventDto caseEventDto, CancellationToken cancellationToken)
         {
             switch (caseEventDto.Name)
             {
                 case "Email":
-                    caseEventDto.Source = await GetSourceJsonObjectAsync<EmailSource, EmailSourceDto>(caseEventDto.SourceId, cancellationToken);
-                    caseEventDto.Rule = await GetRuleJsonObjectAsync<EmailRule, EmailRuleDto>(caseEventDto.RuleId, cancellationToken);
+                    caseEventDto.Source = await GetSourceJsonObjectAsync<EmailSource, EmailSourceDto>(context, mapper, caseEventDto.SourceId, cancellationToken);
+                    caseEventDto.Rule = await GetRuleJsonObjectAsync<EmailRule, EmailRuleDto>(context, mapper, caseEventDto.RuleId, cancellationToken);
                     break;
                 case "Site":
-                    caseEventDto.Source = await GetSourceJsonObjectAsync<SiteSource, SiteSourceDto>(caseEventDto.SourceId, cancellationToken);
-                    caseEventDto.Rule = await GetRuleJsonObjectAsync<SiteRule, SiteRuleDto>(caseEventDto.RuleId, cancellationToken);
+                    caseEventDto.Source = await GetSourceJsonObjectAsync<SiteSource, SiteSourceDto>(context, mapper, caseEventDto.SourceId, cancellationToken);
+                    caseEventDto.Rule = await GetRuleJsonObjectAsync<SiteRule, SiteRuleDto>(context, mapper, caseEventDto.RuleId, cancellationToken);
                     break;
             }
         }
-        private async Task<JsonObject> GetSourceJsonObjectAsync<Table, TableDto>(int SourceId, CancellationToken cancellationToken) where Table : class, IEntity
+        private static async Task<JsonObject> GetSourceJsonObjectAsync<Table, TableDto>(IDatabaseContext context, IMapper mapper, int SourceId, CancellationToken cancellationToken) where Table : class, IEntity
         {
-            Table source = await _context.Set<Table>().Where(x => x.Id == SourceId).FirstAsync(cancellationToken);
-            TableDto dto = _mapper.Map<TableDto>(source);
+            Table source = await context.Set<Table>().Where(x => x.Id == SourceId).FirstAsync(cancellationToken);
+            TableDto dto = mapper.Map<TableDto>(source);
             string sSource = JsonSerializer.Serialize(dto);
             return JsonSerializer.Deserialize<JsonObject>(sSource);
         }
-        private async Task<JsonObject> GetRuleJsonObjectAsync<Table, TableDto>(int RuleId, CancellationToken cancellationToken) where Table : class, IEntity
+        private static async Task<JsonObject> GetRuleJsonObjectAsync<Table, TableDto>(IDatabaseContext context, IMapper mapper, int RuleId, CancellationToken cancellationToken) where Table : class, IEntity
         {
-            Table rule = await _context.Set<Table>().Where(x => x.Id == RuleId).FirstAsync(cancellationToken);
-            TableDto ruleDto = _mapper.Map<TableDto>(rule);
+            Table rule = await context.Set<Table>().Where(x => x.Id == RuleId).FirstAsync(cancellationToken);
+            TableDto ruleDto = mapper.Map<TableDto>(rule);
             string sRule = JsonSerializer.Serialize(ruleDto);
             return JsonSerializer.Deserialize<JsonObject>(sRule);
         }

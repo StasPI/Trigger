@@ -10,28 +10,21 @@ using System.Text.Json.Nodes;
 
 namespace Case.Implementation
 {
-    public class GetReaction
+    public static class GetReaction
     {
-        private readonly IDatabaseContext _context;
-        private readonly IMapper _mapper;
-        public GetReaction(IDatabaseContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-        public async Task Get(CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
+        public static async Task Get(IDatabaseContext context, IMapper mapper, CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
         {
             switch (caseReactionDto.Name)
             {
                 case "Email":
-                    caseReactionDto.Destination = await GetDestinationJsonObjectAsync<EmailDestination, EmailDestinationDto>(caseReactionDto.DestinationId, cancellationToken);
+                    caseReactionDto.Destination = await GetDestinationJsonObjectAsync<EmailDestination, EmailDestinationDto>(context, mapper, caseReactionDto.DestinationId, cancellationToken);
                     break;
             }
         }
-        private async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(int DestinationId, CancellationToken cancellationToken) where Table : class, IEntity
+        private static async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(IDatabaseContext context, IMapper mapper, int DestinationId, CancellationToken cancellationToken) where Table : class, IEntity
         {
-            Table source = await _context.Set<Table>().Where(x => x.Id == DestinationId).FirstAsync(cancellationToken);
-            TableDto dto = _mapper.Map<TableDto>(source);
+            Table source = await context.Set<Table>().Where(x => x.Id == DestinationId).FirstAsync(cancellationToken);
+            TableDto dto = mapper.Map<TableDto>(source);
             string sSource = JsonSerializer.Serialize(dto);
             return JsonSerializer.Deserialize<JsonObject>(sSource);
         }

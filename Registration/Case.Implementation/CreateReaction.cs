@@ -1,33 +1,21 @@
-﻿using AutoMapper;
-using Contracts.Manager;
-using Entities.Manager;
+﻿using Contracts.Manager;
 using Entities.Reaction;
 using EntityFramework.Abstraction;
 
 namespace CreateCase.Implementation
 {
-    public class CreateReaction : CaseReactionDto
+    public static class CreateReaction
     {
-        private readonly IDatabaseContext _context;
-        private readonly IMapper _mapper;
-        public CreateReaction(IDatabaseContext context, IMapper mapper)
+        public static async Task<CaseReactionDto> Create(IDatabaseContext context, CaseReactionDto caseReactionDto, int useCasesId, CancellationToken cancellationToken)
         {
-            _context = context;
-            _mapper = mapper;
-        }
-        public async Task Create(CaseReactionDto caseReactionDto, int useCasesId, CancellationToken cancellationToken)
-        {
+            caseReactionDto.UseCasesID = useCasesId;
             switch (caseReactionDto.Name)
             {
                 case "Email":
-                    caseReactionDto.DestinationId = (await _context.SaveAsyncJsonObject<EmailDestination>(caseReactionDto.Destination, cancellationToken)).Id;
+                    caseReactionDto.DestinationId = (await context.SaveAsyncJsonObject<EmailDestination>(caseReactionDto.Destination, cancellationToken)).Id;
                     break;
             }
-            caseReactionDto.UseCasesID = useCasesId;
-            CaseReaction caseReaction = _mapper.Map<CaseReaction>(caseReactionDto);
-
-            await _context.CaseReaction.AddAsync(caseReaction, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            return caseReactionDto;
         }
     }
 }

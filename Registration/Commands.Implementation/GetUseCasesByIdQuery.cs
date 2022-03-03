@@ -36,22 +36,18 @@ namespace Commands.Implementation
 
                 return useCasesDto;
             }
-
             private async Task EventAsync(List<CaseEventDto> caseEvents, IDatabaseContext context, CancellationToken cancellationToken)
             {
-                GetEvent getEvent = new(context, _mapper);
                 foreach (CaseEventDto caseEvent in caseEvents)
                 {
-                    await getEvent.Get(caseEvent, cancellationToken);
+                    await GetEvent.Get(context, _mapper, caseEvent, cancellationToken);
                 }
             }
-
             private async Task ReactionAsync(List<CaseReactionDto> caseReactions, IDatabaseContext context, CancellationToken cancellationToken)
             {
-                GetReaction getReaction = new(context, _mapper);
                 foreach (CaseReactionDto caseReaction in caseReactions)
                 {
-                    await getReaction.Get(caseReaction, cancellationToken);
+                    await GetReaction.Get(context, _mapper, caseReaction, cancellationToken);
                 }
             }
         }

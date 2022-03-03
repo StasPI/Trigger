@@ -39,24 +39,29 @@ namespace Commands.Implementation
                 await EventAsync(command.CaseEvent, context, useCases.Id, cancellationToken);
                 await ReactionAsync(command.CaseReaction, context, useCases.Id, cancellationToken);
 
+                await context.SaveChangesAsync(cancellationToken);
                 await dbContextTransaction.CommitAsync(cancellationToken);
                 return useCases.Id;
             }
-            private async Task EventAsync(List<CaseEventDto> command, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
+            private async Task EventAsync(List<CaseEventDto> commandCasesEvent, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
             {
-                CreateEvent createEvent = new(context, _mapper);
-                foreach (CaseEventDto caseEvent in command)
+                List<CaseEventDto> casesEventDto = new();
+                foreach (CaseEventDto commandCaseEvent in commandCasesEvent)
                 {
-                    await createEvent.Create(caseEvent, useCasesId, cancellationToken);
+                    casesEventDto.Add(await CreateEvent.Create(context, commandCaseEvent, useCasesId, cancellationToken));
                 }
+                List<CaseEvent> caseEvent = _mapper.Map<List<CaseEvent>>(casesEventDto);
+                await context.CaseEvents.AddRangeAsync(caseEvent, cancellationToken);
             }
-            private async Task ReactionAsync(List<CaseReactionDto> command, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
+            private async Task ReactionAsync(List<CaseReactionDto> commandCasesReaction, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
             {
-                CreateReaction createReaction = new(context, _mapper);
-                foreach (CaseReactionDto caseReaction in command)
+                List<CaseReactionDto> caseReactionDto = new();
+                foreach (CaseReactionDto commandCaseReaction in commandCasesReaction)
                 {
-                    await createReaction.Create(caseReaction, useCasesId, cancellationToken);
+                    caseReactionDto.Add(await CreateReaction.Create(context, commandCaseReaction, useCasesId, cancellationToken));
                 }
+                List<CaseReaction> caseReaction = _mapper.Map<List<CaseReaction>>(caseReactionDto);
+                await context.CaseReaction.AddRangeAsync(caseReaction, cancellationToken);
             }
         }
     }
