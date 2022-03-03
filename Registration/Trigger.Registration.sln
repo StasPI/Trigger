@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapping.Reaction", "Mapping
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Worker.Implementation", "Worker.Implementation\Worker.Implementation.csproj", "{19309F80-E98A-473A-B88D-DB9773CEA5F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Case.Abstraction", "Case.Abstraction\Case.Abstraction.csproj", "{A5F3E359-0905-4C56-BA5B-3E05D143A3DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{19309F80-E98A-473A-B88D-DB9773CEA5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19309F80-E98A-473A-B88D-DB9773CEA5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19309F80-E98A-473A-B88D-DB9773CEA5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5F3E359-0905-4C56-BA5B-3E05D143A3DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5F3E359-0905-4C56-BA5B-3E05D143A3DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5F3E359-0905-4C56-BA5B-3E05D143A3DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5F3E359-0905-4C56-BA5B-3E05D143A3DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -150,6 +156,7 @@ Global
 		{83352ED5-2C65-4375-9F23-9C5E2CCFE11A} = {A37B34CB-3389-459D-96FE-6ACE0E8CDAD2}
 		{603C180B-9F9E-4F79-980E-473A8E2D6433} = {49449F4B-F422-416E-9A78-A478CF69833A}
 		{19309F80-E98A-473A-B88D-DB9773CEA5F2} = {BD875ED1-334C-446A-B456-132FCA49EEEA}
+		{A5F3E359-0905-4C56-BA5B-3E05D143A3DD} = {BD875ED1-334C-446A-B456-132FCA49EEEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D9A5ECD1-9247-4B33-957B-D427C177ABCE}

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Case.Abstraction\Case.Abstraction.csproj" />
     <ProjectReference Include="..\Contracts.Event\Contracts.Event.csproj" />
     <ProjectReference Include="..\Contracts.Manager\Contracts.Manager.csproj" />
     <ProjectReference Include="..\Contracts.Reaction\Contracts.Reaction.csproj" />

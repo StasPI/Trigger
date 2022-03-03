@@ -1,5 +1,7 @@
 using AutoMapper;
+using Case.Abstraction;
 using Commands.Implementation;
+using CreateCase.Implementation;
 using EntityFramework.Abstraction;
 using EntityFramework.Implementation;
 using MediatR;
@@ -19,9 +21,10 @@ builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
     options.UseNpgsql(connectionString), ServiceLifetime.Transient);
 
 builder.Services.AddMediatR(typeof(CreateUseCasesCommand).GetTypeInfo().Assembly);
+builder.Services.AddSingleton<ICreateEvent, CreateEvent>();
 builder.Services.AddControllers();
 
-builder.Services.AddHostedService<WorkerManager>();
+//builder.Services.AddHostedService<WorkerManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

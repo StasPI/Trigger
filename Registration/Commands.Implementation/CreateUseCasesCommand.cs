@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Case.Abstraction;
 using Contracts.Manager;
 using CreateCase.Implementation;
 using Entities.Manager;
@@ -15,11 +16,13 @@ namespace Commands.Implementation
         {
             readonly IServiceScopeFactory _scopeFactory;
             private readonly IMapper _mapper;
+            private readonly ICreateEvent _createEvent;
             private readonly UseCasesDto _useCasesDto;
-            public CreateUseCasesCommandHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
+            public CreateUseCasesCommandHandler(IServiceScopeFactory scopeFactory, IMapper mapper, ICreateEvent createEvent)
             {
                 _scopeFactory = scopeFactory;
                 _mapper = mapper;
+                _createEvent = createEvent;
                 _useCasesDto = new UseCasesDto();
             }
             public async Task<int> Handle(CreateUseCasesCommand command, CancellationToken cancellationToken)
@@ -39,16 +42,19 @@ namespace Commands.Implementation
                 await EventAsync(command.CaseEvent, context, useCases.Id, cancellationToken);
                 await ReactionAsync(command.CaseReaction, context, useCases.Id, cancellationToken);
 
+                await context.SaveChangesAsync(cancellationToken);
                 await dbContextTransaction.CommitAsync(cancellationToken);
                 return useCases.Id;
             }
-            private async Task EventAsync(List<CaseEventDto> command, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
+            private async Task EventAsync(List<CaseEventDto> commandCasesEvent, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
             {
-                CreateEvent createEvent = new(context, _mapper);
-                foreach (CaseEventDto caseEvent in command)
+                List<CaseEventDto> casesEventDto = new();
+                foreach (CaseEventDto commandCaseEvent in commandCasesEvent)
                 {
-                    await createEvent.Create(caseEvent, useCasesId, cancellationToken);
+                    casesEventDto.Add(await _createEvent.Create(commandCaseEvent, useCasesId, cancellationToken));
                 }
+                List<CaseEvent> caseEvent = _mapper.Map<List<CaseEvent>>(casesEventDto);
+                await context.CaseEvents.AddRangeAsync(caseEvent, cancellationToken);
             }
             private async Task ReactionAsync(List<CaseReactionDto> command, IDatabaseContext context, int useCasesId, CancellationToken cancellationToken)
             {
