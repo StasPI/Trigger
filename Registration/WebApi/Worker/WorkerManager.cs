@@ -1,18 +1,22 @@
 ﻿using AutoMapper;
 using Contracts.Manager;
 using EntityFramework.Abstraction;
+using Microsoft.Extensions.Options;
 using Worker.Implementation;
 
 namespace WebApi.Worker
 {
     public class WorkerManager : BackgroundService
     {
-        readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<WorkerManager> _logger;
         private readonly IMapper _mapper;
+        private readonly IDatabaseContext _context;
+        private readonly WorkerOptions _workerOptions;
         public WorkerManager(ILogger<WorkerManager> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
         {
-            _scopeFactory = scopeFactory;
+            IServiceScope scope = scopeFactory.CreateScope();
+            _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+            _workerOptions = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<WorkerOptions>>().Value;
             _logger = logger;
             _mapper = mapper;
         }
@@ -20,10 +24,7 @@ namespace WebApi.Worker
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                using IServiceScope scope = _scopeFactory.CreateScope();
-                IDatabaseContext context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
-
-                NotSentMessages notSentMessages = new(context, _mapper);
+                NotSentMessages notSentMessages = new(_workerOptions, _context, _mapper);
                 List<UseCasesDto> casesEvent = await notSentMessages.GetEventAsync(cancellationToken);
                 List<UseCasesDto> casesReaction = await notSentMessages.GetReactionAsync(cancellationToken);
 
@@ -38,7 +39,7 @@ namespace WebApi.Worker
 
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-                await Task.Delay(10000, cancellationToken);
+                await Task.Delay(_workerOptions.DelayMs, cancellationToken);
             }
         }
     }

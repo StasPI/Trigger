@@ -10,32 +10,43 @@ using System.Text.Json.Nodes;
 
 namespace Case.Implementation
 {
-    public static class Reactions
+    public class Reactions
     {
-        public static async Task<CaseReactionDto> CreateCaseReactionAsync(IDatabaseContext context, CaseReactionDto caseReactionDto, int useCasesId, CancellationToken cancellationToken)
+        private readonly IDatabaseContext _context;
+        private readonly IMapper _mapper; 
+        public Reactions(IDatabaseContext context, IMapper mapper)
         {
-            caseReactionDto.UseCasesID = useCasesId;
-            switch (caseReactionDto.Name)
+            _mapper = mapper;
+            _context = context;
+        }
+        public async Task<CaseReactionDto> CreateCaseReactionAsync(CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
+        {
+            string name = caseReactionDto.Name;
+            JsonObject destination = caseReactionDto.Destination;
+            switch (name)
             {
                 case "Email":
-                    caseReactionDto.DestinationId = (await context.SaveAsyncJsonObject<EmailDestination>(caseReactionDto.Destination, cancellationToken)).Id;
+                    caseReactionDto.DestinationId = (await _context.SaveAsyncJsonObject<EmailDestination>(destination, cancellationToken)).Id;
                     break;
             }
             return caseReactionDto;
         }
-        public static async Task FillaseReactionAsync(IDatabaseContext context, IMapper mapper, CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
+        public async Task FillaseReactionAsync(CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
         {
-            switch (caseReactionDto.Name)
+            string name = caseReactionDto.Name;
+            int destinationId = caseReactionDto.DestinationId;
+            switch (name)
             {
                 case "Email":
-                    caseReactionDto.Destination = await GetDestinationJsonObjectAsync<EmailDestination, EmailDestinationDto>(context, mapper, caseReactionDto.DestinationId, cancellationToken);
+                    caseReactionDto.Destination = await GetDestinationJsonObjectAsync<EmailDestination, EmailDestinationDto>(destinationId, cancellationToken);
                     break;
             }
         }
-        private static async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(IDatabaseContext context, IMapper mapper, int DestinationId, CancellationToken cancellationToken) where Table : class, IEntity
+        private async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(int DestinationId, CancellationToken cancellationToken) 
+            where Table : class, IEntity
         {
-            Table source = await context.Set<Table>().Where(x => x.Id == DestinationId).FirstAsync(cancellationToken);
-            TableDto dto = mapper.Map<TableDto>(source);
+            Table source = await _context.Set<Table>().Where(x => x.Id == DestinationId).FirstAsync(cancellationToken);
+            TableDto dto = _mapper.Map<TableDto>(source);
             string sSource = JsonSerializer.Serialize(dto);
             return JsonSerializer.Deserialize<JsonObject>(sSource);
         }

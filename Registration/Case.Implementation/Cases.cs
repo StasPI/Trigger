@@ -4,25 +4,37 @@ using EntityFramework.Abstraction;
 
 namespace Case.Implementation
 {
-    public static class Cases
+    public class Cases
     {
-        public static async Task FillEventsInUseCasesAsync(IDatabaseContext context, IMapper mapper, List<UseCasesDto> useCasesDto, CancellationToken cancellationToken)
+        private readonly IDatabaseContext _context;
+        private readonly IMapper _mapper;
+        private readonly Events _events;
+        private readonly Reactions _reactions;
+        public Cases(IDatabaseContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+            _events = new(_context, _mapper);
+            _reactions = new(_context, _mapper);
+        }
+
+        public async Task FillEventsInUseCasesAsync(List<UseCasesDto> useCasesDto, CancellationToken cancellationToken)
         {
             foreach (UseCasesDto useCase in useCasesDto)
             {
                 foreach (CaseEventDto caseEventDto in useCase.CaseEvent)
                 {
-                    await Events.FillCaseEventAsync(context, mapper, caseEventDto, cancellationToken);
+                    await _events.FillCaseEventAsync(caseEventDto, cancellationToken);
                 }
             }
         }
-        public static async Task FillRulesInUseCasesAsync(IDatabaseContext context, IMapper mapper, List<UseCasesDto> useCasesDto, CancellationToken cancellationToken)
+        public async Task FillRulesInUseCasesAsync(List<UseCasesDto> useCasesDto, CancellationToken cancellationToken)
         {
             foreach (UseCasesDto useCase in useCasesDto)
             {
                 foreach (CaseReactionDto caseReactionDto in useCase.CaseReaction)
                 {
-                    await Reactions.FillaseReactionAsync(context, mapper, caseReactionDto, cancellationToken);
+                    await _reactions.FillaseReactionAsync(caseReactionDto, cancellationToken);
                 }
             }
         }

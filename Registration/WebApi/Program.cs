@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WebApi.Worker;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.
-                      GetConnectionString("DBConnection");
+string connectionString = builder.Configuration.
+                      GetConnectionString("Postgres");
 
 // Add services to the container.
 builder.Services.AddSingleton<IMapper>(new Mapper(GetMapperConfiguration()));
@@ -19,9 +19,10 @@ builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
     options.UseNpgsql(connectionString), ServiceLifetime.Transient);
 
 builder.Services.AddMediatR(typeof(CreateUseCasesCommand).GetTypeInfo().Assembly);
+
 builder.Services.AddControllers();
 
-builder.Services.AddHostedService<WorkerManager>();
+//builder.Services.AddHostedService<WorkerManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
