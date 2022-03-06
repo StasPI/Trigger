@@ -16,6 +16,7 @@ namespace Commands.Implementation
             private readonly IMapper _mapper;
             private readonly UseCasesDto _useCasesDto;
             private readonly IDatabaseContext _context;
+
             public CreateUseCasesCommandHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
             {
                 IServiceScope scope = scopeFactory.CreateScope();
@@ -23,6 +24,7 @@ namespace Commands.Implementation
                 _mapper = mapper;
                 _useCasesDto = new UseCasesDto();
             }
+
             public async Task<int> Handle(CreateUseCasesCommand command, CancellationToken cancellationToken)
             {
                 using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
@@ -43,6 +45,7 @@ namespace Commands.Implementation
 
                 return useCases.Id;
             }
+
             private async Task EventAsync(List<CaseEventDto> commandCasesEvent, int useCasesId, CancellationToken cancellationToken)
             {
                 List<CaseEventDto> casesEventDto = new();
@@ -55,6 +58,7 @@ namespace Commands.Implementation
                 List<CaseEvent> caseEvent = _mapper.Map<List<CaseEvent>>(casesEventDto);
                 await _context.CaseEvents.AddRangeAsync(caseEvent, cancellationToken);
             }
+
             private async Task ReactionAsync(List<CaseReactionDto> commandCasesReaction, int useCasesId, CancellationToken cancellationToken)
             {
                 List<CaseReactionDto> caseReactionDto = new();

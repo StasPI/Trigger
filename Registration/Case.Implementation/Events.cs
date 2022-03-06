@@ -14,11 +14,13 @@ namespace Case.Implementation
     {
         private readonly IDatabaseContext _context;
         private readonly IMapper _mapper;
+
         public Events(IDatabaseContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
+
         public async Task<CaseEventDto> CreateCaseEventAsync(CaseEventDto caseEventDto, CancellationToken cancellationToken)
         {
             string name = caseEventDto.Name;
@@ -37,6 +39,7 @@ namespace Case.Implementation
             }
             return caseEventDto;
         }
+
         public async Task FillCaseEventAsync(CaseEventDto caseEventDto, CancellationToken cancellationToken)
         {
             string name = caseEventDto.Name;
@@ -54,7 +57,8 @@ namespace Case.Implementation
                     break;
             }
         }
-        private async Task<JsonObject> GetSourceJsonObjectAsync<Table, TableDto>(int SourceId, CancellationToken cancellationToken) 
+
+        private async Task<JsonObject> GetSourceJsonObjectAsync<Table, TableDto>(int SourceId, CancellationToken cancellationToken)
             where Table : class, IEntity
         {
             Table source = await _context.Set<Table>().Where(x => x.Id == SourceId).FirstAsync(cancellationToken);
@@ -62,7 +66,8 @@ namespace Case.Implementation
             string sSource = JsonSerializer.Serialize(dto);
             return JsonSerializer.Deserialize<JsonObject>(sSource);
         }
-        private async Task<JsonObject> GetRuleJsonObjectAsync<Table, TableDto>(int RuleId, CancellationToken cancellationToken) 
+
+        private async Task<JsonObject> GetRuleJsonObjectAsync<Table, TableDto>(int RuleId, CancellationToken cancellationToken)
             where Table : class, IEntity
         {
             Table rule = await _context.Set<Table>().Where(x => x.Id == RuleId).FirstAsync(cancellationToken);

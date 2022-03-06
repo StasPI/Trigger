@@ -10,6 +10,7 @@ namespace Case.Implementation
         private readonly IMapper _mapper;
         private readonly Events _events;
         private readonly Reactions _reactions;
+
         public Cases(IDatabaseContext context, IMapper mapper)
         {
             _context = context;
@@ -28,6 +29,7 @@ namespace Case.Implementation
                 }
             }
         }
+
         public async Task FillRulesInUseCasesAsync(List<UseCasesDto> useCasesDto, CancellationToken cancellationToken)
         {
             foreach (UseCasesDto useCase in useCasesDto)

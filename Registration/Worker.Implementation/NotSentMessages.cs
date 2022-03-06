@@ -13,7 +13,7 @@ namespace Worker.Implementation
         private readonly IMapper _mapper;
         private readonly WorkerOptions _options;
         private readonly Cases _cases;
-        public NotSentMessages(WorkerOptions options,IDatabaseContext context, IMapper mapper)
+        public NotSentMessages(WorkerOptions options, IDatabaseContext context, IMapper mapper)
         {
             _options = options;
             _context = context;
@@ -26,7 +26,7 @@ namespace Worker.Implementation
                 .Where(x => x.SendToEvent == false)
                 .Take(_options.MaxNumberOfMessages)
                 .ToListAsync(cancellationToken);
-            foreach(UseCases useCase in useCases)
+            foreach (UseCases useCase in useCases)
             {
                 useCase.CaseEvent = await _context.CaseEvents
                     .Where(x => x.UseCasesID == useCase.Id)

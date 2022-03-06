@@ -5,7 +5,7 @@ namespace WebApi.Controllers
 {
     public class RegistrationController : BaseController
     {
-        readonly ILogger<RegistrationController> _logger;
+        private readonly ILogger<RegistrationController> _logger;
         public RegistrationController(ILogger<RegistrationController> logger)
         {
             _logger = logger;

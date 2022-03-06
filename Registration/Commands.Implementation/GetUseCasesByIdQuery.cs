@@ -17,6 +17,7 @@ namespace Commands.Implementation
             private readonly IDatabaseContext _context;
             private readonly Events _events;
             private readonly Reactions _reactions;
+
             public GetUseCasesByIdQueryHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
             {
                 IServiceScope scope = scopeFactory.CreateScope();
@@ -25,6 +26,7 @@ namespace Commands.Implementation
                 _events = new(_context, _mapper);
                 _reactions = new(_context, _mapper);
             }
+
             public async Task<UseCasesDto> Handle(GetUseCasesByIdQuery query, CancellationToken cancellationToken)
             {
                 UseCases useCases = await _context.UseCases.Where(x => x.Id == query.Id).FirstAsync(cancellationToken);
@@ -38,6 +40,7 @@ namespace Commands.Implementation
 
                 return useCasesDto;
             }
+
             private async Task EventAsync(List<CaseEventDto> caseEvents, CancellationToken cancellationToken)
             {
                 foreach (CaseEventDto caseEvent in caseEvents)
@@ -45,6 +48,7 @@ namespace Commands.Implementation
                     await _events.FillCaseEventAsync(caseEvent, cancellationToken);
                 }
             }
+
             private async Task ReactionAsync(List<CaseReactionDto> caseReactions, CancellationToken cancellationToken)
             {
                 foreach (CaseReactionDto caseReaction in caseReactions)

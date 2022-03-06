@@ -13,12 +13,14 @@ namespace Case.Implementation
     public class Reactions
     {
         private readonly IDatabaseContext _context;
-        private readonly IMapper _mapper; 
+        private readonly IMapper _mapper;
+
         public Reactions(IDatabaseContext context, IMapper mapper)
         {
             _mapper = mapper;
             _context = context;
         }
+
         public async Task<CaseReactionDto> CreateCaseReactionAsync(CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
         {
             string name = caseReactionDto.Name;
@@ -31,6 +33,7 @@ namespace Case.Implementation
             }
             return caseReactionDto;
         }
+
         public async Task FillaseReactionAsync(CaseReactionDto caseReactionDto, CancellationToken cancellationToken)
         {
             string name = caseReactionDto.Name;
@@ -42,7 +45,8 @@ namespace Case.Implementation
                     break;
             }
         }
-        private async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(int DestinationId, CancellationToken cancellationToken) 
+
+        private async Task<JsonObject> GetDestinationJsonObjectAsync<Table, TableDto>(int DestinationId, CancellationToken cancellationToken)
             where Table : class, IEntity
         {
             Table source = await _context.Set<Table>().Where(x => x.Id == DestinationId).FirstAsync(cancellationToken);
