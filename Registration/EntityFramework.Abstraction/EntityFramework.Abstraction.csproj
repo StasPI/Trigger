@@ -11,9 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Entities.Event\Entities.Event.csproj" />
-    <ProjectReference Include="..\Entities.Manager\Entities.Manager.csproj" />
-    <ProjectReference Include="..\Entities.Reaction\Entities.Reaction.csproj" />
+    <ProjectReference Include="..\Entities.Registration\Entities.Registration.csproj" />
   </ItemGroup>
 
 </Project>

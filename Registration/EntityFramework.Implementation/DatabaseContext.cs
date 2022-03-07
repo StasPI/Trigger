@@ -1,7 +1,5 @@
 ﻿using Entities.Abstraction;
-using Entities.Event;
-using Entities.Manager;
-using Entities.Reaction;
+using Entities.Registration;
 using EntityFramework.Abstraction;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -11,19 +9,7 @@ namespace EntityFramework.Implementation
 {
     public class DatabaseContext : DbContext, IDatabaseContext
     {
-        //manager
         public DbSet<UseCases> UseCases { get; set; }
-        public DbSet<CaseEvent> CaseEvents { get; set; }
-        public DbSet<CaseReaction> CaseReaction { get; set; }
-
-        //event
-        public DbSet<EmailRule> EmailRule { get; set; }
-        public DbSet<EmailSource> EmailSource { get; set; }
-        public DbSet<SiteRule> SiteRule { get; set; }
-        public DbSet<SiteSource> SiteSource { get; set; }
-
-        //reaction
-        public DbSet<EmailDestination> EmailDestination { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
@@ -45,22 +31,22 @@ namespace EntityFramework.Implementation
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task AddAsync<T>(T Item) where T : class
-        {
-            await base.Set<T>().AddAsync(Item);
-        }
+        //public async Task AddAsync<T>(T Item) where T : class
+        //{
+        //    await base.Set<T>().AddAsync(Item);
+        //}
 
-        public async Task<T> SaveAsyncJsonObject<T>(JsonObject jsonObject, CancellationToken cancellationToken = default) where T : class
-        {
-            T gClass = JsonSerializer.Deserialize<T>(jsonObject);
-            await AddAsync<T>(gClass);
-            await SaveChangesAsync(cancellationToken);
-            return gClass;
-        }
+        //public async Task<T> SaveAsyncJsonObject<T>(JsonObject jsonObject, CancellationToken cancellationToken = default) where T : class
+        //{
+        //    T gClass = JsonSerializer.Deserialize<T>(jsonObject);
+        //    await AddAsync<T>(gClass);
+        //    await SaveChangesAsync(cancellationToken);
+        //    return gClass;
+        //}
 
-        public DbSet<T> Set<T>() where T : class
-        {
-            return base.Set<T>();
-        }
+        //public DbSet<T> Set<T>() where T : class
+        //{
+        //    return base.Set<T>();
+        //}
     }
 }

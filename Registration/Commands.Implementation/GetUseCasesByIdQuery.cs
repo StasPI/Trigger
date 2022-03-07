@@ -1,60 +1,50 @@
 ﻿using AutoMapper;
-using Case.Implementation;
-using Contracts.Manager;
-using Entities.Manager;
+using Dto.Registration;
+using Entities.Registration;
 using EntityFramework.Abstraction;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System.Text.Json.Nodes;
 
 namespace Commands.Implementation
 {
-    public class GetUseCasesByIdQuery : UseCasesDto, IRequest<UseCasesDto>
+    public class GetUseCasesByIdQuery : UseCasesGetDto, IRequest<UseCasesGetDto>
     {
-        public class GetUseCasesByIdQueryHandler : IRequestHandler<GetUseCasesByIdQuery, UseCasesDto>
+        public class GetUseCasesByIdQueryHandler : IRequestHandler<GetUseCasesByIdQuery, UseCasesGetDto>
         {
+            private readonly ILogger<GetUseCasesByIdQueryHandler> _logger;
             private readonly IMapper _mapper;
             private readonly IDatabaseContext _context;
-            private readonly Events _events;
-            private readonly Reactions _reactions;
+            private readonly List<JsonObject> _caseEvent;
+            private readonly List<JsonObject> _caseReaction;
 
-            public GetUseCasesByIdQueryHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
+            public GetUseCasesByIdQueryHandler(ILogger<GetUseCasesByIdQueryHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
+                _logger = logger;
                 IServiceScope scope = scopeFactory.CreateScope();
                 _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                 _mapper = mapper;
-                _events = new(_context, _mapper);
-                _reactions = new(_context, _mapper);
+                _caseEvent = new();
+                _caseReaction = new();
             }
 
-            public async Task<UseCasesDto> Handle(GetUseCasesByIdQuery query, CancellationToken cancellationToken)
+            public async Task<UseCasesGetDto> Handle(GetUseCasesByIdQuery query, CancellationToken cancellationToken)
             {
                 UseCases useCases = await _context.UseCases.Where(x => x.Id == query.Id).FirstAsync(cancellationToken);
-                useCases.CaseEvent = await _context.CaseEvents.Where(x => x.UseCasesID == useCases.Id).ToListAsync(cancellationToken);
-                useCases.CaseReaction = await _context.CaseReaction.Where(x => x.UseCasesID == useCases.Id).ToListAsync(cancellationToken);
 
-                UseCasesDto useCasesDto = _mapper.Map<UseCasesDto>(useCases);
+                UseCasesGetDto useCasesGetDto = _mapper.Map<UseCasesGetDto>(useCases);
 
-                await EventAsync(useCasesDto.CaseEvent, cancellationToken);
-                await ReactionAsync(useCasesDto.CaseReaction, cancellationToken);
+                useCasesGetDto.CaseEventStr.ForEach(x => _caseEvent.Add(JsonNode.Parse(x).AsObject()));
+                useCasesGetDto.CaseReactionStr.ForEach(x => _caseReaction.Add(JsonNode.Parse(x).AsObject()));
 
-                return useCasesDto;
-            }
+                useCasesGetDto.CaseEvent = _caseEvent;
+                useCasesGetDto.CaseReaction = _caseReaction;
 
-            private async Task EventAsync(List<CaseEventDto> caseEvents, CancellationToken cancellationToken)
-            {
-                foreach (CaseEventDto caseEvent in caseEvents)
-                {
-                    await _events.FillCaseEventAsync(caseEvent, cancellationToken);
-                }
-            }
+                _logger.LogInformation("GetUseCasesByIdQueryHandler get UseCase {id} : {time}", useCasesGetDto.Id, DateTimeOffset.Now);
 
-            private async Task ReactionAsync(List<CaseReactionDto> caseReactions, CancellationToken cancellationToken)
-            {
-                foreach (CaseReactionDto caseReaction in caseReactions)
-                {
-                    await _reactions.FillaseReactionAsync(caseReaction, cancellationToken);
-                }
+                return useCasesGetDto;
             }
         }
     }

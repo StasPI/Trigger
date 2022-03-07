@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Case.Implementation\Case.Implementation.csproj" />
+    <ProjectReference Include="..\Dto.Registration\Dto.Registration.csproj" />
     <ProjectReference Include="..\EntityFramework.Abstraction\EntityFramework.Abstraction.csproj" />
   </ItemGroup>
 

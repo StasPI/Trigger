@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Contracts.Manager\Contracts.Manager.csproj" />
-    <ProjectReference Include="..\Entities.Manager\Entities.Manager.csproj" />
+    <ProjectReference Include="..\Dto.Registration\Dto.Registration.csproj" />
+    <ProjectReference Include="..\Entities.Registration\Entities.Registration.csproj" />
   </ItemGroup>
 
 </Project>

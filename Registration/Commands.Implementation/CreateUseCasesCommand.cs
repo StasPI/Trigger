@@ -1,75 +1,66 @@
 ﻿using AutoMapper;
-using Case.Implementation;
-using Contracts.Manager;
-using Entities.Manager;
+using Dto.Registration;
+using Entities.Registration;
 using EntityFramework.Abstraction;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Commands.Implementation
 {
-    public class CreateUseCasesCommand : UseCasesDto, IRequest<int>
+    public class CreateUseCasesCommand : UseCasesPostDto, IRequest<int>
     {
         public class CreateUseCasesCommandHandler : IRequestHandler<CreateUseCasesCommand, int>
         {
+            private readonly ILogger<CreateUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
-            private readonly UseCasesDto _useCasesDto;
             private readonly IDatabaseContext _context;
+            private readonly List<string> _caseEvent;
+            private readonly List<string> _caseReaction;
+            private readonly UseCasesPostDto _useCasesPostDto;
 
-            public CreateUseCasesCommandHandler(IServiceScopeFactory scopeFactory, IMapper mapper)
+            public CreateUseCasesCommandHandler(ILogger<CreateUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
+                _logger = logger;
                 IServiceScope scope = scopeFactory.CreateScope();
                 _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                 _mapper = mapper;
-                _useCasesDto = new UseCasesDto();
+                _caseEvent = new();
+                _caseReaction = new();
+                _useCasesPostDto = new();
             }
 
             public async Task<int> Handle(CreateUseCasesCommand command, CancellationToken cancellationToken)
             {
-                using IDbContextTransaction dbContextTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+                using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-                _useCasesDto.UserId = command.UserId;
-                _useCasesDto.CaseName = command.CaseName;
-
-                UseCases useCases = _mapper.Map<UseCases>(_useCasesDto);
-
-                await _context.UseCases.AddAsync(useCases, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
-
-                await EventAsync(command.CaseEvent, useCases.Id, cancellationToken);
-                await ReactionAsync(command.CaseReaction, useCases.Id, cancellationToken);
-
-                await _context.SaveChangesAsync(cancellationToken);
-                await dbContextTransaction.CommitAsync(cancellationToken);
-
-                return useCases.Id;
-            }
-
-            private async Task EventAsync(List<CaseEventDto> commandCasesEvent, int useCasesId, CancellationToken cancellationToken)
-            {
-                List<CaseEventDto> casesEventDto = new();
-                Events events = new(_context, _mapper);
-                foreach (CaseEventDto commandCaseEvent in commandCasesEvent)
+                try
                 {
-                    commandCaseEvent.UseCasesID = useCasesId;
-                    casesEventDto.Add(await events.CreateCaseEventAsync(commandCaseEvent, cancellationToken));
-                }
-                List<CaseEvent> caseEvent = _mapper.Map<List<CaseEvent>>(casesEventDto);
-                await _context.CaseEvents.AddRangeAsync(caseEvent, cancellationToken);
-            }
+                    command.CaseEvent.ForEach(x => _caseEvent.Add(x.ToJsonString()));
+                    command.CaseReaction.ForEach(x => _caseReaction.Add(x.ToJsonString()));
 
-            private async Task ReactionAsync(List<CaseReactionDto> commandCasesReaction, int useCasesId, CancellationToken cancellationToken)
-            {
-                List<CaseReactionDto> caseReactionDto = new();
-                Reactions reactions = new(_context, _mapper);
-                foreach (CaseReactionDto commandCaseReaction in commandCasesReaction)
-                {
-                    commandCaseReaction.UseCasesID = useCasesId;
-                    caseReactionDto.Add(await reactions.CreateCaseReactionAsync(commandCaseReaction, cancellationToken));
+                    _useCasesPostDto.UserId = command.UserId;
+                    _useCasesPostDto.CaseName = command.CaseName;
+                    _useCasesPostDto.CaseEventStr = _caseEvent;
+                    _useCasesPostDto.CaseReactionStr = _caseReaction;
+
+                    UseCases useCases = _mapper.Map<UseCases>(_useCasesPostDto);
+
+                    await _context.UseCases.AddAsync(useCases, cancellationToken);
+
+                    await _context.SaveChangesAsync(cancellationToken);
+                    await transaction.CommitAsync(cancellationToken);
+
+                    _logger.LogInformation("CreateUseCasesCommandHandler registration UseCase {id} : {time}", useCases.Id, DateTimeOffset.Now);
+                    return useCases.Id;
                 }
-                List<CaseReaction> caseReaction = _mapper.Map<List<CaseReaction>>(caseReactionDto);
-                await _context.CaseReaction.AddRangeAsync(caseReaction, cancellationToken);
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    _logger.LogInformation("CreateUseCasesCommandHandler Error: {ex} : {time}", ex,  DateTimeOffset.Now);
+                    return -1;
+                }
             }
         }
     }
