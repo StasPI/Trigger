@@ -5,6 +5,8 @@ using EntityFramework.Implementation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using WebApi.Worker;
+using Worker.Abstraction;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +19,12 @@ builder.Services.AddSingleton<IMapper>(new Mapper(GetMapperConfiguration()));
 builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
     options.UseNpgsql(connectionString), ServiceLifetime.Transient);
 
-builder.Services.AddMediatR(typeof(CreateUseCasesCommand).GetTypeInfo().Assembly);
+builder.Services.AddMediatR(typeof(PostUseCasesCommand).GetTypeInfo().Assembly);
 
 builder.Services.AddControllers();
 
+//builder.Services.AddSingleton<IEventWorker>();
+//builder.Services.AddSingleton<IReactionWorker>();
 //builder.Services.AddHostedService<WorkerManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

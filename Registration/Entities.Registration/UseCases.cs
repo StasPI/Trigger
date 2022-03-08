@@ -12,5 +12,7 @@ namespace Entities.Registration
         public List<string> CaseEvent { get; set; }
         [Required]
         public List<string> CaseReaction { get; set; }
+        public bool SendEvent { get; set; } = false;
+        public bool SendReaction { get; set; } = false;
     }
 }

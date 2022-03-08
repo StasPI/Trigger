@@ -14,14 +14,30 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            _logger.LogInformation("RegistrationController GetById running at: {time}, id: {id}", DateTimeOffset.Now, id);
-            return Ok(await Mediator.Send(new GetUseCasesByIdQuery { Id = id }));
+            _logger.LogInformation("RegistrationController HttpGet running at: {time}, id: {id}", DateTimeOffset.Now, id);
+            if (id <= 0) return BadRequest();
+            return Ok(await Mediator.Send(new GetByIdUseCasesCommand { Id = id }));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateUseCasesCommand command)
+        public async Task<IActionResult> Create(PostUseCasesCommand command)
         {
-            _logger.LogInformation("RegistrationController Create running at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("RegistrationController HttpPost running at: {time}", DateTimeOffset.Now);
+            return Ok(await Mediator.Send(command));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            _logger.LogInformation("RegistrationController HttpDelete running at: {time}, id: {id}", DateTimeOffset.Now, id);
+            return Ok(await Mediator.Send(new DeleteUseCasesCommand { Id = id }));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(PutUseCasesCommand command)
+        {
+            _logger.LogInformation("RegistrationController HttpPut running at: {time}, id: {id}", DateTimeOffset.Now, command.Id);
+            if (command.Id <= 0) return BadRequest();
             return Ok(await Mediator.Send(command));
         }
     }

@@ -10,17 +10,17 @@ using System.Text.Json.Nodes;
 
 namespace Commands.Implementation
 {
-    public class GetUseCasesByIdQuery : UseCasesGetDto, IRequest<UseCasesGetDto>
+    public class GetByIdUseCasesCommand : UseCasesGetDto, IRequest<UseCasesGetDto>
     {
-        public class GetUseCasesByIdQueryHandler : IRequestHandler<GetUseCasesByIdQuery, UseCasesGetDto>
+        public class GetByIdUseCasesCommandHandler : IRequestHandler<GetByIdUseCasesCommand, UseCasesGetDto>
         {
-            private readonly ILogger<GetUseCasesByIdQueryHandler> _logger;
+            private readonly ILogger<GetByIdUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
             private readonly IDatabaseContext _context;
             private readonly List<JsonObject> _caseEvent;
             private readonly List<JsonObject> _caseReaction;
 
-            public GetUseCasesByIdQueryHandler(ILogger<GetUseCasesByIdQueryHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
+            public GetByIdUseCasesCommandHandler(ILogger<GetByIdUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
                 _logger = logger;
                 IServiceScope scope = scopeFactory.CreateScope();
@@ -30,9 +30,9 @@ namespace Commands.Implementation
                 _caseReaction = new();
             }
 
-            public async Task<UseCasesGetDto> Handle(GetUseCasesByIdQuery query, CancellationToken cancellationToken)
+            public async Task<UseCasesGetDto> Handle(GetByIdUseCasesCommand query, CancellationToken cancellationToken)
             {
-                UseCases useCases = await _context.UseCases.Where(x => x.Id == query.Id).FirstAsync(cancellationToken);
+                UseCases useCases = await _context.UseCases.Where(x => (x.Id == query.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
 
                 UseCasesGetDto useCasesGetDto = _mapper.Map<UseCasesGetDto>(useCases);
 
@@ -42,7 +42,7 @@ namespace Commands.Implementation
                 useCasesGetDto.CaseEvent = _caseEvent;
                 useCasesGetDto.CaseReaction = _caseReaction;
 
-                _logger.LogInformation("GetUseCasesByIdQueryHandler get UseCase {id} : {time}", useCasesGetDto.Id, DateTimeOffset.Now);
+                _logger.LogInformation("GetByIdUseCasesCommandHandler get UseCase {id} : {time}", useCasesGetDto.Id, DateTimeOffset.Now);
 
                 return useCasesGetDto;
             }

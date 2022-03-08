@@ -2,6 +2,7 @@
 using Dto.Registration;
 using Entities.Registration;
 using EntityFramework.Abstraction;
+using Helps;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,18 +10,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Commands.Implementation
 {
-    public class CreateUseCasesCommand : UseCasesPostDto, IRequest<int>
+    public class PostUseCasesCommand : UseCasesPostDto, IRequest<int>
     {
-        public class CreateUseCasesCommandHandler : IRequestHandler<CreateUseCasesCommand, int>
+        public class PostUseCasesCommandHandler : IRequestHandler<PostUseCasesCommand, int>
         {
-            private readonly ILogger<CreateUseCasesCommandHandler> _logger;
+            private readonly ILogger<PostUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
             private readonly IDatabaseContext _context;
-            private readonly List<string> _caseEvent;
-            private readonly List<string> _caseReaction;
+            private List<string> _caseEvent;
+            private List<string> _caseReaction;
             private readonly UseCasesPostDto _useCasesPostDto;
 
-            public CreateUseCasesCommandHandler(ILogger<CreateUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
+            public PostUseCasesCommandHandler(ILogger<PostUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
                 _logger = logger;
                 IServiceScope scope = scopeFactory.CreateScope();
@@ -31,14 +32,18 @@ namespace Commands.Implementation
                 _useCasesPostDto = new();
             }
 
-            public async Task<int> Handle(CreateUseCasesCommand command, CancellationToken cancellationToken)
+            public async Task<int> Handle(PostUseCasesCommand command, CancellationToken cancellationToken)
             {
                 using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
                 try
                 {
-                    command.CaseEvent.ForEach(x => _caseEvent.Add(x.ToJsonString()));
-                    command.CaseReaction.ForEach(x => _caseReaction.Add(x.ToJsonString()));
+                    List<Task> tasks = new()
+                    {
+                        Task.Run(async () => _caseEvent = await ConvertObject.ListJsonObjectToListString(command.CaseEvent)),
+                        Task.Run(async () => _caseReaction = await ConvertObject.ListJsonObjectToListString(command.CaseReaction))
+                    };
+                    Task.WhenAll(tasks).Wait(cancellationToken);
 
                     _useCasesPostDto.UserId = command.UserId;
                     _useCasesPostDto.CaseName = command.CaseName;
@@ -52,13 +57,13 @@ namespace Commands.Implementation
                     await _context.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
 
-                    _logger.LogInformation("CreateUseCasesCommandHandler registration UseCase {id} : {time}", useCases.Id, DateTimeOffset.Now);
+                    _logger.LogInformation("PostUseCasesCommandHandler registration UseCase {id} : {time}", useCases.Id, DateTimeOffset.Now);
                     return useCases.Id;
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync(cancellationToken);
-                    _logger.LogInformation("CreateUseCasesCommandHandler Error: {ex} : {time}", ex,  DateTimeOffset.Now);
+                    _logger.LogInformation("PostUseCasesCommandHandler Error: {ex} : {time}", ex,  DateTimeOffset.Now);
                     return -1;
                 }
             }

@@ -1,8 +1,7 @@
 ﻿namespace Worker.Implementation
 {
-    public class WorkerOptions
+    public class ReactionWorkerOptions
     {
         public int MaxNumberOfMessages { get; set; }
-        public int DelayMs { get; set; }
     }
 }

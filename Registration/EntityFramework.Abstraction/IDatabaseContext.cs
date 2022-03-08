@@ -1,7 +1,6 @@
 ﻿using Entities.Registration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using System.Text.Json.Nodes;
 
 namespace EntityFramework.Abstraction
 {

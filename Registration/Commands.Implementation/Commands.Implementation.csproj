@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Dto.Registration\Dto.Registration.csproj" />
     <ProjectReference Include="..\EntityFramework.Abstraction\EntityFramework.Abstraction.csproj" />
+    <ProjectReference Include="..\Helps\Helps.csproj" />
   </ItemGroup>
 
 </Project>

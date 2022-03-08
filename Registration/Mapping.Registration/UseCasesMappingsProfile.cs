@@ -20,6 +20,8 @@ namespace Mapping.Registration
                 .ForMember(x => x.DateCreated, map => map.Ignore())
                 .ForMember(x => x.DateUpdated, map => map.Ignore())
                 .ForMember(x => x.DateDeleted, map => map.Ignore())
+                .ForMember(x => x.SendEvent, map => map.Ignore())
+                .ForMember(x => x.SendReaction, map => map.Ignore())
                 .ForMember(x => x.CaseEvent, map => map.MapFrom(src => src.CaseEventStr))
                 .ForMember(x => x.CaseReaction, map => map.MapFrom(src => src.CaseReactionStr));
         }
