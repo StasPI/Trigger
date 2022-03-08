@@ -2,6 +2,7 @@
 using Dto.Registration;
 using Entities.Registration;
 using EntityFramework.Abstraction;
+using Helps;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +18,8 @@ namespace Commands.Implementation
             private readonly ILogger<GetByIdUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
             private readonly IDatabaseContext _context;
-            private readonly List<JsonObject> _caseEvent;
-            private readonly List<JsonObject> _caseReaction;
+            private List<JsonObject> _caseEvent;
+            private List<JsonObject> _caseReaction;
 
             public GetByIdUseCasesCommandHandler(ILogger<GetByIdUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
@@ -36,8 +37,12 @@ namespace Commands.Implementation
 
                 UseCasesGetDto useCasesGetDto = _mapper.Map<UseCasesGetDto>(useCases);
 
-                useCasesGetDto.CaseEventStr.ForEach(x => _caseEvent.Add(JsonNode.Parse(x).AsObject()));
-                useCasesGetDto.CaseReactionStr.ForEach(x => _caseReaction.Add(JsonNode.Parse(x).AsObject()));
+                List<Task> tasks = new()
+                {
+                    Task.Run(async () => _caseEvent = await ConvertObject.ListStringToJsonObject(useCasesGetDto.CaseEventStr)),
+                    Task.Run(async () => _caseReaction = await ConvertObject.ListStringToJsonObject(useCasesGetDto.CaseReactionStr))
+                };
+                Task.WhenAll(tasks).Wait(cancellationToken);
 
                 useCasesGetDto.CaseEvent = _caseEvent;
                 useCasesGetDto.CaseReaction = _caseReaction;

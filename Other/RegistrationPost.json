@@ -1,91 +1,92 @@
 {
-    "UserId": 1,
-    "CaseName": "FirstCase",
-    "CaseEvent": [
-        {
-            "Name": "Email",
-            "Source": {
-                "Protocol": "smtp",
-                "Host": "Host.ru",
-                "Login": "Login1",
-                "Password": "Password1"
-            },
-            "Rule": {
-                "Address": null,
-                "Copy": null,
-                "Subject": null,
-                "Body": null,
-                "Attachment": null,
-                "Outgoing": false,
-                "Access": true
-            }
-        },
-        {
-            "Name": "Email",
-            "Source": {
-                "Protocol": "smtp",
-                "Host": "Host.ru",
-                "Login": "Login2",
-                "Password": "Password2"
-            },
-            "Rule": {
-                "Address": null,
-                "Copy": null,
-                "Subject": null,
-                "Body": "tBody2",
-                "Attachment": null,
-                "Outgoing": true,
-                "Access": false
-            }
-        },
-        {
-            "Name": "Email",
-            "Source": {
-                "Protocol": "smtp",
-                "Host": "Host.ru",
-                "Login": "Login3",
-                "Password": "Password3"
-            },
-            "Rule": {
-                "Address": "bk.ru",
-                "Copy": null,
-                "Subject": null,
-                "Body": "tBody3",
-                "Attachment": null,
-                "Outgoing": false,
-                "Access": false
-            }
-        },
-        {
-            "Name": "Site",
-            "Source": {
-                "Url": "ya.ru"
-            },
-            "Rule": {
-                "Text": "xz"
-            }
-        }
-    ],
-    "CaseReaction": [
-        {
-            "Name": "Email",
-            "Destination": {
-                "Address": "aa@bk.ru",
-                "Copy": null,
-                "Subject": "tSubject",
-                "Body": "tBody",
-                "Attachment": null
-            }
-        },
-        {
-            "Name": "Email",
-            "Destination": {
-                "Address": "bb@bk.ru",
-                "Copy": null,
-                "Subject": "tSubject",
-                "Body": "tBody",
-                "Attachment": null
-            }
-        }
-    ]
+  "UserId": 1,
+  "CaseName": "FirstCase",
+  "Active": true,
+  "CaseEvent": [
+    {
+      "Name": "Email",
+      "Source": {
+        "Protocol": "smtp",
+        "Host": "Host.ru",
+        "Login": "Login1",
+        "Password": "Password1"
+      },
+      "Rule": {
+        "Address": null,
+        "Copy": null,
+        "Subject": null,
+        "Body": null,
+        "Attachment": null,
+        "Outgoing": false,
+        "Access": true
+      }
+    },
+    {
+      "Name": "Email",
+      "Source": {
+        "Protocol": "smtp",
+        "Host": "Host.ru",
+        "Login": "Login2",
+        "Password": "Password2"
+      },
+      "Rule": {
+        "Address": null,
+        "Copy": null,
+        "Subject": null,
+        "Body": "tBody2",
+        "Attachment": null,
+        "Outgoing": true,
+        "Access": false
+      }
+    },
+    {
+      "Name": "Email",
+      "Source": {
+        "Protocol": "smtp",
+        "Host": "Host.ru",
+        "Login": "Login3",
+        "Password": "Password3"
+      },
+      "Rule": {
+        "Address": "bk.ru",
+        "Copy": null,
+        "Subject": null,
+        "Body": "tBody3",
+        "Attachment": null,
+        "Outgoing": false,
+        "Access": false
+      }
+    },
+    {
+      "Name": "Site",
+      "Source": {
+        "Url": "ya.ru"
+      },
+      "Rule": {
+        "Text": "xz"
+      }
+    }
+  ],
+  "CaseReaction": [
+    {
+      "Name": "Email",
+      "Destination": {
+        "Address": "aa@bk.ru",
+        "Copy": null,
+        "Subject": "tSubject",
+        "Body": "tBody",
+        "Attachment": null
+      }
+    },
+    {
+      "Name": "Email",
+      "Destination": {
+        "Address": "bb@bk.ru",
+        "Copy": null,
+        "Subject": "tSubject",
+        "Body": "tBody",
+        "Attachment": null
+      }
+    }
+  ]
 }

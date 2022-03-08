@@ -9,10 +9,10 @@ namespace WebApi.Worker
         private readonly IEventWorker _eventWorker;
         private readonly IReactionWorker _reactionWorker;
         private readonly WorkerManagerOptions _workerOptions;
-        public WorkerManager(ILogger<WorkerManager> logger, IServiceScopeFactory scopeFactory, IEventWorker eventWorker, IReactionWorker reactionWorker)
+        public WorkerManager(ILogger<WorkerManager> logger, IOptions<WorkerManagerOptions> workerOptions,
+            IEventWorker eventWorker, IReactionWorker reactionWorker)
         {
-            IServiceScope scope = scopeFactory.CreateScope();
-            _workerOptions = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<WorkerManagerOptions>>().Value;
+            _workerOptions = workerOptions.Value;
             _logger = logger;
             _eventWorker = eventWorker;
             _reactionWorker = reactionWorker;
@@ -26,8 +26,8 @@ namespace WebApi.Worker
 
                 List<Task> tasks = new()
                 {
-                    Task.Run(async () => await _eventWorker.Run(cancellationToken))//,
-                    //Task.Run(async () => await _reactionWorker.Run(cancellationToken))
+                    Task.Run(async () => await _eventWorker.Run(cancellationToken), cancellationToken),
+                    Task.Run(async () => await _reactionWorker.Run(cancellationToken), cancellationToken)
                 };
                 Task.WhenAll(tasks).Wait(cancellationToken);
 

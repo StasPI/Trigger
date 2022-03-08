@@ -17,6 +17,7 @@
     <ProjectReference Include="..\EntityFramework.Implementation\EntityFramework.Implementation.csproj" />
     <ProjectReference Include="..\Mapping.Registration\Mapping.Registration.csproj" />
     <ProjectReference Include="..\Worker.Abstraction\Worker.Abstraction.csproj" />
+    <ProjectReference Include="..\Worker.Implementation\Worker.Implementation.csproj" />
   </ItemGroup>
 
 </Project>

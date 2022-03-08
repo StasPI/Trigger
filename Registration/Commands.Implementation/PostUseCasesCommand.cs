@@ -49,6 +49,7 @@ namespace Commands.Implementation
                     _useCasesPostDto.CaseName = command.CaseName;
                     _useCasesPostDto.CaseEventStr = _caseEvent;
                     _useCasesPostDto.CaseReactionStr = _caseReaction;
+                    _useCasesPostDto.Active = command.Active;
 
                     UseCases useCases = _mapper.Map<UseCases>(_useCasesPostDto);
 

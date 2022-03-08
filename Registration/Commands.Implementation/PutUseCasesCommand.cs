@@ -49,6 +49,13 @@ namespace Commands.Implementation
                     {
                         useCases.CaseName = command.CaseName;
                     }
+
+                    if (useCases.Active != command.Active)
+                    {
+                        useCases.Active = command.Active;
+                        useCases.SendEvent = false;
+                        useCases.SendReaction = false;
+                    }
                     
                     if (!useCases.CaseEvent.SequenceEqual(_caseEvent))
                     {

@@ -28,6 +28,9 @@ namespace Commands.Implementation
             {
                 UseCases useCases = await _context.UseCases.Where(x => (x.Id == command.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
                 useCases.DateDeleted = DateTime.UtcNow;
+                useCases.Active = false;
+                useCases.SendEvent = false;
+                useCases.SendReaction = false;
 
                 await _context.SaveChangesAsync(cancellationToken);
 

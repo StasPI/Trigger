@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 
 namespace Helps
 {
@@ -7,15 +6,11 @@ namespace Helps
     {
         public static Task<List<string>> ListJsonObjectToListString(List<JsonObject> jo)
         {
-            ConcurrentBag<string> tempCase = new();
-            jo.ForEach(x => tempCase.Add(x.ToJsonString()));
-            return Task.FromResult(tempCase.ToList());
+            return Task.FromResult(jo.AsParallel().AsOrdered().Select(x => x.ToJsonString()).ToList());
         }
-        public static Task<List<string>> ListJsonObjectToListString(List<JsonObject> jo)
+        public static Task<List<JsonObject>> ListStringToJsonObject(List<string> st)
         {
-            ConcurrentBag<string> tempCase = new();
-            jo.ForEach(x => tempCase.Add(x.ToJsonString()));
-            return Task.FromResult(tempCase.ToList());
+            return Task.FromResult(st.AsParallel().AsOrdered().Select(x => JsonNode.Parse(x).AsObject()).ToList());
         }
     }
 }
