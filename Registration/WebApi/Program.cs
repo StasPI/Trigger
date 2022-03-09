@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WebApi.Worker;
+using WebApi.Worker.Options;
 using Worker;
 using Worker.Abstraction;
 
