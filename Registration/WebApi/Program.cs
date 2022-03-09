@@ -1,13 +1,13 @@
 using AutoMapper;
-using Commands.Implementation;
+using Commands;
+using EntityFramework;
 using EntityFramework.Abstraction;
-using EntityFramework.Implementation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WebApi.Worker;
+using Worker;
 using Worker.Abstraction;
-using Worker.Implementation;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

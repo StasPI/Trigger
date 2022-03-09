@@ -1,4 +1,4 @@
-﻿namespace Entities.Abstraction
+﻿namespace Entities.Base.Abstraction
 {
     public interface IEntity
     {

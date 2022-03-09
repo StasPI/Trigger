@@ -9,16 +9,16 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Worker.Abstraction;
 
-namespace Worker.Implementation
+namespace Worker
 {
-    public class ReactionWorker : UseCasesSendReactionDto, IReactionWorker
+    public class EventWorker : UseCasesSendEventDto, IEventWorker
     {
-        private readonly ILogger<ReactionWorker> _logger;
+        private readonly ILogger<EventWorker> _logger;
         private readonly IMapper _mapper;
         private readonly IDatabaseContext _context;
-        private readonly ReactionWorkerOptions _workerOptions;
+        private readonly EventWorkerOptions _workerOptions;
 
-        public ReactionWorker(ILogger<ReactionWorker> logger, IOptions<ReactionWorkerOptions> workerOptions, IServiceScopeFactory scopeFactory, IMapper mapper)
+        public EventWorker(ILogger<EventWorker> logger, IOptions<EventWorkerOptions> workerOptions, IServiceScopeFactory scopeFactory, IMapper mapper)
         {
             _logger = logger;
             _mapper = mapper;
@@ -29,16 +29,16 @@ namespace Worker.Implementation
 
         public async Task Run(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("ReactionWorker run at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("EventWorker run at: {time}", DateTimeOffset.Now);
 
             List<UseCases> useCases = await _context.UseCases
-                .Where(x => x.SendReaction == false)
+                .Where(x => x.SendEvent == false)
                 .Take(_workerOptions.MaxNumberOfMessages)
                 .ToListAsync(cancellationToken);
 
-            List<UseCasesSendReactionDto> useCasesSendReactionDto = _mapper.Map<List<UseCasesSendReactionDto>>(useCases);
+            List<UseCasesSendEventDto> useCasesSendEventDto = _mapper.Map<List<UseCasesSendEventDto>>(useCases);
 
-            Parallel.ForEach(useCasesSendReactionDto, async x => x.CaseReaction = await ConvertObject.ListStringToJsonObject(x.CaseReactionStr));
+            Parallel.ForEach(useCasesSendEventDto, async x => x.CaseEvent = await ConvertObject.ListStringToJsonObject(x.CaseEventStr));
 
             Console.WriteLine("send");
         }

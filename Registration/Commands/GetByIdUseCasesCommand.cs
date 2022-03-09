@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json.Nodes;
 
-namespace Commands.Implementation
+namespace Commands
 {
     public class GetByIdUseCasesCommand : UseCasesGetDto, IRequest<UseCasesGetDto>
     {

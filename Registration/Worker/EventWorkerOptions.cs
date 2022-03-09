@@ -1,6 +1,6 @@
-﻿namespace Worker.Implementation
+﻿namespace Worker
 {
-    public class ReactionWorkerOptions
+    public class EventWorkerOptions
     {
         public const string Name = "ReactionWorkerOptions";
         public int MaxNumberOfMessages { get; set; }

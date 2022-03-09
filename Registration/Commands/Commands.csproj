@@ -9,12 +9,12 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="MediatR" Version="10.0.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Dto.Registration\Dto.Registration.csproj" />
-    <ProjectReference Include="..\EntityFramework.Abstraction\EntityFramework.Abstraction.csproj" />
+    <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
     <ProjectReference Include="..\Helps\Helps.csproj" />
   </ItemGroup>
 

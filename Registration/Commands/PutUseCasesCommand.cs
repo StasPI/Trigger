@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Commands.Implementation
+namespace Commands
 {
     public class PutUseCasesCommand : UseCasesPostDto, IRequest<int>
     {

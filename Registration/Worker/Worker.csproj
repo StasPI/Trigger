@@ -8,13 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Dto.Registration\Dto.Registration.csproj" />
-    <ProjectReference Include="..\EntityFramework.Abstraction\EntityFramework.Abstraction.csproj" />
+    <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
     <ProjectReference Include="..\Helps\Helps.csproj" />
-    <ProjectReference Include="..\Worker.Abstraction\Worker.Abstraction.csproj" />
   </ItemGroup>
 
 </Project>

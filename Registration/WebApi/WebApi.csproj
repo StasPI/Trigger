@@ -8,16 +8,16 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="10.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Commands.Implementation\Commands.Implementation.csproj" />
-    <ProjectReference Include="..\EntityFramework.Implementation\EntityFramework.Implementation.csproj" />
+    <ProjectReference Include="..\Commands\Commands.csproj" />
+    <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
     <ProjectReference Include="..\Mapping.Registration\Mapping.Registration.csproj" />
-    <ProjectReference Include="..\Worker.Abstraction\Worker.Abstraction.csproj" />
-    <ProjectReference Include="..\Worker.Implementation\Worker.Implementation.csproj" />
+    <ProjectReference Include="..\Worker\Worker.csproj" />
   </ItemGroup>
 
 </Project>

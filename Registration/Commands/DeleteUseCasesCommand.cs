@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Commands.Implementation
+namespace Commands
 {
     public class DeleteUseCasesCommand : IRequest<int>
     {

@@ -1,9 +1,9 @@
-﻿using Entities.Abstraction;
+﻿using Entities.Base.Abstraction;
 using Entities.Registration;
 using EntityFramework.Abstraction;
 using Microsoft.EntityFrameworkCore;
 
-namespace EntityFramework.Implementation
+namespace EntityFramework
 {
     public class DatabaseContext : DbContext, IDatabaseContext
     {

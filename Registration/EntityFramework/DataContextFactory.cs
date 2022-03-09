@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace EntityFramework.Implementation
+namespace EntityFramework
 {
     public class DataContextFactory : IDesignTimeDbContextFactory<DatabaseContext>
     {

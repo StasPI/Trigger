@@ -1,4 +1,4 @@
-﻿using Commands.Implementation;
+﻿using Commands;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
