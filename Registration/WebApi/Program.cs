@@ -24,13 +24,13 @@ builder.Services.AddMediatR(typeof(PostUseCasesCommand).GetTypeInfo().Assembly);
 
 builder.Services.AddControllers();
 
-builder.Services.Configure<WorkerManagerOptions>(builder.Configuration.GetSection(WorkerManagerOptions.Name));
-builder.Services.Configure<EventWorkerOptions>(builder.Configuration.GetSection(EventWorkerOptions.Name));
-builder.Services.Configure<ReactionWorkerOptions>(builder.Configuration.GetSection(ReactionWorkerOptions.Name));
+builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection(WorkerOptions.Name));
 
-builder.Services.AddSingleton<IEventWorker, EventWorker>();
-builder.Services.AddSingleton<IReactionWorker, ReactionWorker>();
-builder.Services.AddHostedService<WorkerManager>();
+builder.Services.AddSingleton<IEvents, Events>();
+builder.Services.AddSingleton<IReactions, Reactions>();
+
+builder.Services.AddHostedService<WorkerEvents>();
+builder.Services.AddHostedService<WorkerReactions>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
