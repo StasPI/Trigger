@@ -24,7 +24,9 @@ namespace WebApi.Worker
             {
                 _logger.LogInformation("WorkerReactions run at: {time}", DateTimeOffset.Now);
                 List<UseCasesSendReactionDto> useCasesSendEventDto = await _reactions.Get(_options.Reactions.MaxMessages, cancellationToken);
+                await Task.Delay(_options.Reactions.DelayMs, cancellationToken);
             }
+            await Task.CompletedTask;
         }
     }
 }

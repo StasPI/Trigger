@@ -1,6 +1,7 @@
-﻿using Dto.Registration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using RabbitMQ.Abstraction;
 using WebApi.Worker.Options;
+using Worker;
 using Worker.Abstraction;
 
 namespace WebApi.Worker
@@ -10,9 +11,14 @@ namespace WebApi.Worker
         private readonly ILogger<WorkerEvents> _logger;
         private readonly IEvents _events;
         private readonly WorkerOptions _options;
+        private readonly IRabbitMqProducer<EventMessage> _producer;
 
-        public WorkerEvents(ILogger<WorkerEvents> logger, IEvents events, IOptions<WorkerOptions> options)
+        public WorkerEvents(IRabbitMqProducer<EventMessage> producer, ILogger<WorkerEvents> logger, IEvents events, IOptions<WorkerOptions> options)
+        //public WorkerEvents(IServiceScopeFactory scopeFactory, ILogger<WorkerEvents> logger, IEvents events, IOptions<WorkerOptions> options)
         {
+            //IServiceScope scope = scopeFactory.CreateScope();
+            //_producer = scope.ServiceProvider.GetRequiredService<IRabbitMqProducer<EventMessage>>();
+            _producer = producer;
             _logger = logger;
             _events = events;
             _options = options.Value;
@@ -23,8 +29,13 @@ namespace WebApi.Worker
             while (!cancellationToken.IsCancellationRequested)
             {
                 _logger.LogInformation("WorkerEvents run at: {time}", DateTimeOffset.Now);
-                List<UseCasesSendEventDto> useCasesSendEventDto = await _events.Get(_options.Events.MaxMessages, cancellationToken);
+                EventMessage eventMessage = new() { EventMessages = await _events.Get(_options.Events.MaxMessages, cancellationToken) };
+
+                _producer.Publish(eventMessage);
+
+                await Task.Delay(_options.Events.DelayMs, cancellationToken);
             }
+            await Task.CompletedTask;
         }
     }
 }

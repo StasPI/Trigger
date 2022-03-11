@@ -4,6 +4,7 @@ using EntityFramework;
 using EntityFramework.Abstraction;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 using System.Reflection;
 using WebApi.Worker;
 using WebApi.Worker.Options;
@@ -25,13 +26,25 @@ builder.Services.AddMediatR(typeof(PostUseCasesCommand).GetTypeInfo().Assembly);
 
 builder.Services.AddControllers();
 
+
+
+builder.Services.AddScoped(serviceProvider =>
+{
+    //amqp://{username}:{password}@{host}:{port}/{virtual_host}
+    var uri = new Uri("amqp://sa:Password1@localhost:15800/Events_HOST");
+    return new ConnectionFactory
+    {
+        Uri = uri
+    };
+});
+
 builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection(WorkerOptions.Name));
 
 builder.Services.AddSingleton<IEvents, Events>();
 builder.Services.AddSingleton<IReactions, Reactions>();
 
 builder.Services.AddHostedService<WorkerEvents>();
-builder.Services.AddHostedService<WorkerReactions>();
+//builder.Services.AddHostedService<WorkerReactions>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

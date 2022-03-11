@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Worker\Abstraction\**" />
+    <Content Remove="Worker\Abstraction\**" />
+    <EmbeddedResource Remove="Worker\Abstraction\**" />
+    <None Remove="Worker\Abstraction\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
@@ -17,11 +24,8 @@
     <ProjectReference Include="..\Commands\Commands.csproj" />
     <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
     <ProjectReference Include="..\Mapping.Registration\Mapping.Registration.csproj" />
+    <ProjectReference Include="..\RabbitMQ\RabbitMQ.csproj" />
     <ProjectReference Include="..\Worker\Worker.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Worker\Abstraction\" />
   </ItemGroup>
 
 </Project>
