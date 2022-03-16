@@ -14,10 +14,7 @@ namespace WebApi.Worker
         private readonly IRabbitMqProducer<EventMessage> _producer;
 
         public WorkerEvents(IRabbitMqProducer<EventMessage> producer, ILogger<WorkerEvents> logger, IEvents events, IOptions<WorkerOptions> options)
-        //public WorkerEvents(IServiceScopeFactory scopeFactory, ILogger<WorkerEvents> logger, IEvents events, IOptions<WorkerOptions> options)
         {
-            //IServiceScope scope = scopeFactory.CreateScope();
-            //_producer = scope.ServiceProvider.GetRequiredService<IRabbitMqProducer<EventMessage>>();
             _producer = producer;
             _logger = logger;
             _events = events;
@@ -31,7 +28,7 @@ namespace WebApi.Worker
                 _logger.LogInformation("WorkerEvents run at: {time}", DateTimeOffset.Now);
                 EventMessage eventMessage = new() { EventMessages = await _events.Get(_options.Events.MaxMessages, cancellationToken) };
 
-                _producer.Publish(eventMessage);
+                //_producer.Publish(eventMessage);
 
                 await Task.Delay(_options.Events.DelayMs, cancellationToken);
             }

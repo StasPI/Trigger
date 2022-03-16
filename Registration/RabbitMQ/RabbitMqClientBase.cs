@@ -5,8 +5,8 @@ namespace RabbitMQ
 {
     public abstract class RabbitMqClientBase : IDisposable
     {
-        protected const string VirtualHost = "CUSTOM_HOST";
-        protected readonly string LoggerExchange = $"{VirtualHost}.LoggerExchange";
+        protected const string VirtualHost = "Registration";
+        protected readonly string LoggerExchange = $"{VirtualHost}.EventExchange";
         protected readonly string LoggerQueue = $"{VirtualHost}.log.message";
         protected const string LoggerQueueAndExchangeRoutingKey = "log.message";
 
