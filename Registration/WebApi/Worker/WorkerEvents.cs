@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using RabbitMQ.Abstraction;
 using WebApi.Worker.Options;
-using Worker;
-using Worker.Abstraction;
+using Messages;
+using Messages.Abstraction;
 
 namespace WebApi.Worker
 {
@@ -28,7 +28,7 @@ namespace WebApi.Worker
             {
                 try
                 {
-                    _logger.LogInformation("WorkerEvents run at: {time}", DateTimeOffset.Now);
+                    _logger.LogInformation("WorkerEvents run at Time: {time}", DateTimeOffset.Now);
                     EventMessage eventMessage = new() { EventMessages = await _events.GetMessageAsync(_options.Events.MaxMessages, cancellationToken) };
 
                     if (eventMessage.EventMessages.Count > 0) _producer.Publish(eventMessage);
@@ -37,7 +37,7 @@ namespace WebApi.Worker
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogInformation("WorkerEvents Exception: {ex}", ex);
+                    _logger.LogInformation("WorkerEvents Time: {time} | Exception: {ex}", DateTimeOffset.Now, ex);
                     await _events.RollbackAsync(cancellationToken);
                 }
                 finally

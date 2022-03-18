@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using RabbitMQ.Abstraction;
 using WebApi.Worker.Options;
-using Worker;
-using Worker.Abstraction;
+using Messages;
+using Messages.Abstraction;
 
 namespace WebApi.Worker
 {
@@ -28,7 +28,7 @@ namespace WebApi.Worker
             {
                 try
                 {
-                    _logger.LogInformation("WorkerReactions run at: {time}", DateTimeOffset.Now);
+                    _logger.LogInformation("WorkerReactions run at Time: {time}", DateTimeOffset.Now);
                     ReactionMessage reactionMessage = new() { ReactionMessages = await _reactions.GetMessageAsync(_options.Reactions.MaxMessages, cancellationToken) };
 
                     if (reactionMessage.ReactionMessages.Count > 0) _producer.Publish(reactionMessage);
@@ -37,7 +37,7 @@ namespace WebApi.Worker
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogInformation("WorkerReactions Exception: {ex}", ex);
+                    _logger.LogInformation("WorkerReactions Time: {time} | Exception: {ex}", DateTimeOffset.Now, ex);
                     await _reactions.RollbackAsync(cancellationToken);
                 }
                 finally

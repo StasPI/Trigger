@@ -38,6 +38,7 @@ namespace Commands
 
                 try
                 {
+                    _logger.LogInformation("PostUseCasesCommandHandler Post Time: {time}", DateTimeOffset.Now);
                     List<Task> tasks = new()
                     {
                         Task.Run(async () => _caseEvent = await ConvertObject.ListJsonObjectToListString(command.CaseEvent)),
@@ -56,15 +57,17 @@ namespace Commands
                     await _context.UseCases.AddAsync(useCases, cancellationToken);
 
                     await _context.SaveChangesAsync(cancellationToken);
+
+                    _logger.LogInformation("PostUseCasesCommandHandler Post UseCase: {id} | Time: {time}", useCases.Id, DateTimeOffset.Now);
+
                     await transaction.CommitAsync(cancellationToken);
 
-                    _logger.LogInformation("PostUseCasesCommandHandler registration UseCase {id} : {time}", useCases.Id, DateTimeOffset.Now);
                     return useCases.Id;
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogWarning("PostUseCasesCommandHandler Exception Time: {time} | Error: {ex}", DateTimeOffset.Now, ex);
                     await transaction.RollbackAsync(cancellationToken);
-                    _logger.LogInformation("PostUseCasesCommandHandler Error: {ex} : {time}", ex,  DateTimeOffset.Now);
                     return -1;
                 }
             }

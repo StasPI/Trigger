@@ -14,18 +14,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Commands\Commands.csproj" />
     <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
     <ProjectReference Include="..\Mapping.Registration\Mapping.Registration.csproj" />
+    <ProjectReference Include="..\Messages\Messages.csproj" />
     <ProjectReference Include="..\RabbitMQ\RabbitMQ.csproj" />
-    <ProjectReference Include="..\Worker\Worker.csproj" />
   </ItemGroup>
 
 </Project>

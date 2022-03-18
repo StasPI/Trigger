@@ -36,6 +36,7 @@ namespace Commands
 
                 try
                 {
+                    _logger.LogInformation("PutUseCasesCommandHandler Put UseCase: {id} | Time: {time}", command.Id, DateTimeOffset.Now);
                     UseCases useCases = await _context.UseCases.Where(x => (x.Id == command.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
 
                     List<Task> tasks = new()
@@ -72,13 +73,12 @@ namespace Commands
                     await _context.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
 
-                    _logger.LogInformation("PutUseCasesCommandHandler update UseCase {id} : {time}", useCases.Id, DateTimeOffset.Now);
                     return useCases.Id;
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync(cancellationToken);
-                    _logger.LogInformation("PutUseCasesCommandHandler Error: {ex} : {time}", ex, DateTimeOffset.Now);
+                    _logger.LogWarning("PutUseCasesCommandHandler Exception UseCase: {id} | Time: {time} | Error: {ex} :", command.Id, DateTimeOffset.Now, ex);
                     return -1;
                 }
             }

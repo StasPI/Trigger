@@ -33,23 +33,30 @@ namespace Commands
 
             public async Task<UseCasesGetDto> Handle(GetByIdUseCasesCommand query, CancellationToken cancellationToken)
             {
-                UseCases useCases = await _context.UseCases.Where(x => (x.Id == query.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
-
-                UseCasesGetDto useCasesGetDto = _mapper.Map<UseCasesGetDto>(useCases);
-
-                List<Task> tasks = new()
+                try
                 {
-                    Task.Run(async () => _caseEvent = await ConvertObject.ListStringToJsonObject(useCasesGetDto.CaseEventStr)),
-                    Task.Run(async () => _caseReaction = await ConvertObject.ListStringToJsonObject(useCasesGetDto.CaseReactionStr))
-                };
-                Task.WhenAll(tasks).Wait(cancellationToken);
+                    _logger.LogInformation("GetByIdUseCasesCommandHandler Get UseCase: {id} | Time: {time}", query.Id, DateTimeOffset.Now);
+                    UseCases useCases = await _context.UseCases.Where(x => (x.Id == query.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
 
-                useCasesGetDto.CaseEvent = _caseEvent;
-                useCasesGetDto.CaseReaction = _caseReaction;
+                    UseCasesGetDto useCasesGetDto = _mapper.Map<UseCasesGetDto>(useCases);
 
-                _logger.LogInformation("GetByIdUseCasesCommandHandler get UseCase {id} : {time}", useCasesGetDto.Id, DateTimeOffset.Now);
+                    List<Task> tasks = new()
+                    {
+                        Task.Run(async () => _caseEvent = await ConvertObject.ListStringToJsonObject(useCasesGetDto.CaseEventStr)),
+                        Task.Run(async () => _caseReaction = await ConvertObject.ListStringToJsonObject(useCasesGetDto.CaseReactionStr))
+                    };
+                    Task.WhenAll(tasks).Wait(cancellationToken);
 
-                return useCasesGetDto;
+                    useCasesGetDto.CaseEvent = _caseEvent;
+                    useCasesGetDto.CaseReaction = _caseReaction;
+
+                    return useCasesGetDto;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning("GetByIdUseCasesCommandHandler Exception UseCase: {id} | Time: {time} | Error: {ex} ", query.Id, DateTimeOffset.Now, ex);
+                    return new UseCasesGetDto();
+                }
             }
         }
     }

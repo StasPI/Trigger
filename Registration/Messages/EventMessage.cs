@@ -1,6 +1,6 @@
 ﻿using Dto.Registration;
 
-namespace Worker
+namespace Messages
 {
     public class EventMessage
     {

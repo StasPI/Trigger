@@ -1,6 +1,6 @@
 ﻿using Dto.Registration;
 
-namespace Worker.Abstraction
+namespace Messages.Abstraction
 {
     public interface IEvents
     {

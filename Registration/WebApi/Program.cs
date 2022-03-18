@@ -3,6 +3,8 @@ using Commands;
 using EntityFramework;
 using EntityFramework.Abstraction;
 using MediatR;
+using Messages;
+using Messages.Abstraction;
 using Microsoft.EntityFrameworkCore;
 using RabbitMQ.Abstraction;
 using RabbitMQ.Client;
@@ -10,8 +12,6 @@ using System.Reflection;
 using WebApi.Worker;
 using WebApi.Worker.Options;
 using WebApi.Worker.Producer;
-using Worker;
-using Worker.Abstraction;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

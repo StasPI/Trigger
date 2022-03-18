@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Worker.Abstraction;
+using Messages.Abstraction;
 
-namespace Worker
+namespace Messages
 {
     public class Events : UseCasesSendEventDto, IEvents
     {
@@ -29,7 +29,7 @@ namespace Worker
 
         public async Task<List<UseCasesSendEventDto>> GetMessageAsync(int maxMessagesEvents, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Generates a list of unsent events: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("Events Generates a list of unsent events Time: {time}", DateTimeOffset.Now);
             transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
             useCases = await _context.UseCases
@@ -49,13 +49,13 @@ namespace Worker
 
         public async Task CommitAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Event transaction commit: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("Event transaction commit Time: {time}", DateTimeOffset.Now);
             await transaction.CommitAsync(cancellationToken);
         }
 
         public async Task RollbackAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Event transaction rollback: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("Event transaction rollback Time: {time}", DateTimeOffset.Now);
             await transaction.RollbackAsync(cancellationToken);
         }
     }

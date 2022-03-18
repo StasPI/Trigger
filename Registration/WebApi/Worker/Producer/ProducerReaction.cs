@@ -2,7 +2,7 @@
 using RabbitMQ;
 using RabbitMQ.Client;
 using WebApi.Worker.Options;
-using Worker;
+using Messages;
 
 namespace WebApi.Worker.Producer
 {
