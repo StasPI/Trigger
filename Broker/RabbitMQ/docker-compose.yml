@@ -16,4 +16,4 @@ services:
     volumes:
       - ./etc/so/definitions.json:/opt/definitions.json:ro
       - ./etc/so/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
-    #restart: always
+    restart: always
