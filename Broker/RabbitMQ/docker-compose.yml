@@ -1,4 +1,4 @@
-﻿version: '3.8'
+﻿version: '3.9.13'
 
 services:
   rabbitmq:
@@ -13,4 +13,7 @@ services:
       - 5800:5672
       # HTTP management UI http://localhost:15800/
       - 15800:15672
-    restart: always
+    volumes:
+      - ./etc/so/definitions.json:/opt/definitions.json:ro
+      - ./etc/so/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+    #restart: always
