@@ -41,14 +41,15 @@ builder.Services.AddSingleton(serviceProvider =>
 });
 
 builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection(WorkerOptions.Name));
+builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection(ProducerOptions.Name));
 
 builder.Services.AddHostedService<WorkerEvents>();
 builder.Services.AddSingleton<IEvents, Events>();
-builder.Services.AddSingleton<IRabbitMqProducer<EventMessage>, EventProducer>();
+builder.Services.AddSingleton<IRabbitMqProducer<EventMessage>, ProducerEvent>();
 
-//builder.Services.AddHostedService<WorkerReactions>();
-//builder.Services.AddSingleton<IReactions, Reactions>();
-//builder.Services.AddSingleton<IRabbitMqProducer<ReactionMessage>, ReactionProducer>();
+builder.Services.AddHostedService<WorkerReactions>();
+builder.Services.AddSingleton<IReactions, Reactions>();
+builder.Services.AddSingleton<IRabbitMqProducer<ReactionMessage>, ProducerReaction>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

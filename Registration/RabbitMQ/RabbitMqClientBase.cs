@@ -5,11 +5,6 @@ namespace RabbitMQ
 {
     public abstract class RabbitMqClientBase : IDisposable
     {
-        protected const string VirtualHost = "Registration";
-        protected readonly string LoggerExchange = $"{VirtualHost}.EventExchange";
-        protected readonly string LoggerQueue = $"{VirtualHost}.log.message";
-        protected const string LoggerQueueAndExchangeRoutingKey = "log.message";
-
         protected IModel Channel { get; private set; }
         private IConnection _connection;
         private readonly ConnectionFactory _connectionFactory;
@@ -32,22 +27,6 @@ namespace RabbitMQ
             if (Channel == null || Channel.IsOpen == false)
             {
                 Channel = _connection.CreateModel();
-                Channel.ExchangeDeclare(
-                    exchange: LoggerExchange,
-                    type: "direct",
-                    durable: true,
-                    autoDelete: false);
-
-                Channel.QueueDeclare(
-                    queue: LoggerQueue,
-                    durable: false,
-                    exclusive: false,
-                    autoDelete: false);
-
-                Channel.QueueBind(
-                    queue: LoggerQueue,
-                    exchange: LoggerExchange,
-                    routingKey: LoggerQueueAndExchangeRoutingKey);
             }
         }
 

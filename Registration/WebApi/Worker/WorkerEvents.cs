@@ -13,7 +13,8 @@ namespace WebApi.Worker
         private readonly WorkerOptions _options;
         private readonly IRabbitMqProducer<EventMessage> _producer;
 
-        public WorkerEvents(IRabbitMqProducer<EventMessage> producer, ILogger<WorkerEvents> logger, IEvents events, IOptions<WorkerOptions> options)
+        public WorkerEvents(IRabbitMqProducer<EventMessage> producer, ILogger<WorkerEvents> logger, IEvents events, 
+            IOptions<WorkerOptions> options)
         {
             _producer = producer;
             _logger = logger;
@@ -25,12 +26,24 @@ namespace WebApi.Worker
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                _logger.LogInformation("WorkerEvents run at: {time}", DateTimeOffset.Now);
-                EventMessage eventMessage = new() { EventMessages = await _events.Get(_options.Events.MaxMessages, cancellationToken) };
+                try
+                {
+                    _logger.LogInformation("WorkerEvents run at: {time}", DateTimeOffset.Now);
+                    EventMessage eventMessage = new() { EventMessages = await _events.GetMessageAsync(_options.Events.MaxMessages, cancellationToken) };
 
-                //_producer.Publish(eventMessage);
+                    if (eventMessage.EventMessages.Count > 0) _producer.Publish(eventMessage);
 
-                await Task.Delay(_options.Events.DelayMs, cancellationToken);
+                    await _events.CommitAsync(cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogInformation("WorkerEvents Exception: {ex}", ex);
+                    await _events.RollbackAsync(cancellationToken);
+                }
+                finally
+                {
+                    await Task.Delay(_options.Events.DelayMs, cancellationToken);
+                }
             }
             await Task.CompletedTask;
         }

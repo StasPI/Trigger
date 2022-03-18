@@ -1,6 +1,7 @@
-﻿using Dto.Registration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using RabbitMQ.Abstraction;
 using WebApi.Worker.Options;
+using Worker;
 using Worker.Abstraction;
 
 namespace WebApi.Worker
@@ -10,9 +11,12 @@ namespace WebApi.Worker
         private readonly ILogger<WorkerReactions> _logger;
         private readonly IReactions _reactions;
         private readonly WorkerOptions _options;
+        private readonly IRabbitMqProducer<ReactionMessage> _producer;
 
-        public WorkerReactions(ILogger<WorkerReactions> logger, IEvents events, IOptions<WorkerOptions> options, IReactions reactions)
+        public WorkerReactions(IRabbitMqProducer<ReactionMessage> producer, ILogger<WorkerReactions> logger, IReactions reactions, 
+            IOptions<WorkerOptions> options)
         {
+            _producer = producer;
             _logger = logger;
             _reactions = reactions;
             _options = options.Value;
@@ -22,9 +26,24 @@ namespace WebApi.Worker
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                _logger.LogInformation("WorkerReactions run at: {time}", DateTimeOffset.Now);
-                List<UseCasesSendReactionDto> useCasesSendEventDto = await _reactions.Get(_options.Reactions.MaxMessages, cancellationToken);
-                await Task.Delay(_options.Reactions.DelayMs, cancellationToken);
+                try
+                {
+                    _logger.LogInformation("WorkerReactions run at: {time}", DateTimeOffset.Now);
+                    ReactionMessage reactionMessage = new() { ReactionMessages = await _reactions.GetMessageAsync(_options.Reactions.MaxMessages, cancellationToken) };
+
+                    if (reactionMessage.ReactionMessages.Count > 0) _producer.Publish(reactionMessage);
+
+                    await _reactions.CommitAsync(cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogInformation("WorkerReactions Exception: {ex}", ex);
+                    await _reactions.RollbackAsync(cancellationToken);
+                }
+                finally
+                {
+                    await Task.Delay(_options.Reactions.DelayMs, cancellationToken);
+                }
             }
             await Task.CompletedTask;
         }

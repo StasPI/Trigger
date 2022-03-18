@@ -4,6 +4,7 @@ using Entities.Registration;
 using EntityFramework.Abstraction;
 using Helps;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Worker.Abstraction;
@@ -15,6 +16,7 @@ namespace Worker
         private readonly ILogger<Reactions> _logger;
         private readonly IMapper _mapper;
         private readonly IDatabaseContext _context;
+        private IDbContextTransaction transaction;
 
         public Reactions(ILogger<Reactions> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
         {
@@ -24,9 +26,10 @@ namespace Worker
             _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
         }
 
-        public async Task<List<UseCasesSendReactionDto>> Get(int maxMessagesReactions, CancellationToken cancellationToken)
+        public async Task<List<UseCasesSendReactionDto>> GetMessageAsync(int maxMessagesReactions, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("ReactionWorker run at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("Generates a list of unsent reactions: {time}", DateTimeOffset.Now);
+            transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
             List<UseCases> useCases = await _context.UseCases
                 .Where(x => x.SendReaction == false)
@@ -36,8 +39,22 @@ namespace Worker
             List<UseCasesSendReactionDto> useCasesSendReactionDto = _mapper.Map<List<UseCasesSendReactionDto>>(useCases);
 
             Parallel.ForEach(useCasesSendReactionDto, async x => x.CaseReaction = await ConvertObject.ListStringToJsonObject(x.CaseReactionStr));
+            Parallel.ForEach(useCases, x => x.SendReaction = true);
+
+            await _context.SaveChangesAsync(cancellationToken);
 
             return useCasesSendReactionDto;
+        }
+        public async Task CommitAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Reaction transaction commit: {time}", DateTimeOffset.Now);
+            await transaction.CommitAsync(cancellationToken);
+        }
+
+        public async Task RollbackAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Reaction transaction rollback: {time}", DateTimeOffset.Now);
+            await transaction.RollbackAsync(cancellationToken);
         }
     }
 }
