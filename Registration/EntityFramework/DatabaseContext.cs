@@ -28,23 +28,5 @@ namespace EntityFramework
 
             return await base.SaveChangesAsync(cancellationToken);
         }
-
-        //public async Task AddAsync<T>(T Item) where T : class
-        //{
-        //    await base.Set<T>().AddAsync(Item);
-        //}
-
-        //public async Task<T> SaveAsyncJsonObject<T>(JsonObject jsonObject, CancellationToken cancellationToken = default) where T : class
-        //{
-        //    T gClass = JsonSerializer.Deserialize<T>(jsonObject);
-        //    await AddAsync<T>(gClass);
-        //    await SaveChangesAsync(cancellationToken);
-        //    return gClass;
-        //}
-
-        //public DbSet<T> Set<T>() where T : class
-        //{
-        //    return base.Set<T>();
-        //}
     }
 }

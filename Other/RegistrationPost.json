@@ -7,64 +7,73 @@
       "Name": "Email",
       "Source": {
         "Protocol": "smtp",
-        "Host": "Host.ru",
+        "Host": "Host1.ru",
         "Login": "Login1",
         "Password": "Password1"
       },
-      "Rule": {
-        "Address": null,
-        "Copy": null,
-        "Subject": null,
-        "Body": null,
-        "Attachment": null,
-        "Outgoing": false,
-        "Access": true
-      }
+      "Rule": [
+        {
+          "Address": null,
+          "Copy": null,
+          "Subject": null,
+          "Body": null,
+          "Attachment": null,
+          "Outgoing": false,
+          "Access": true
+        },
+        {
+          "Address": null,
+          "Copy": null,
+          "Subject": null,
+          "Body": "tBody1",
+          "Attachment": null,
+          "Outgoing": true,
+          "Access": false
+        }
+      ]
     },
     {
       "Name": "Email",
       "Source": {
         "Protocol": "smtp",
-        "Host": "Host.ru",
+        "Host": "Host2.ru",
         "Login": "Login2",
         "Password": "Password2"
       },
-      "Rule": {
-        "Address": null,
-        "Copy": null,
-        "Subject": null,
-        "Body": "tBody2",
-        "Attachment": null,
-        "Outgoing": true,
-        "Access": false
-      }
-    },
-    {
-      "Name": "Email",
-      "Source": {
-        "Protocol": "smtp",
-        "Host": "Host.ru",
-        "Login": "Login3",
-        "Password": "Password3"
-      },
-      "Rule": {
-        "Address": "bk.ru",
-        "Copy": null,
-        "Subject": null,
-        "Body": "tBody3",
-        "Attachment": null,
-        "Outgoing": false,
-        "Access": false
-      }
+      "Rule": [
+        {
+          "Address": null,
+          "Copy": null,
+          "Subject": null,
+          "Body": null,
+          "Attachment": null,
+          "Outgoing": false,
+          "Access": true
+        },
+        {
+          "Address": null,
+          "Copy": null,
+          "Subject": "tSubject2",
+          "Body": null,
+          "Attachment": null,
+          "Outgoing": true,
+          "Access": false
+        }
+      ]
     },
     {
       "Name": "Site",
       "Source": {
         "Url": "ya.ru"
       },
-      "Rule": {
-        "Text": "xz"
-      }
+      "Rule": [
+        {
+          "Text": "xz"
+        },
+        {
+          "Text": "xz2"
+        }
+      ]
     }
   ],
   "CaseReaction": [

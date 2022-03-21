@@ -9,9 +9,5 @@ namespace Entities.Manager
         public int UserId { get; set; }
         [Required]
         public bool Active { get; set; }
-
-        [Required]
-        public virtual List<CaseEvent> CaseEvent { get; set; }
-
     }
 }
