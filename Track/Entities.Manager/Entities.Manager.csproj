@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Entities.Base\Entities.Base.csproj" />
+    <ProjectReference Include="..\Entities.EmailObject\Entities.EmailObject.csproj" />
+    <ProjectReference Include="..\Entitites.SiteObject\Entitites.SiteObject.csproj" />
   </ItemGroup>
 
 </Project>

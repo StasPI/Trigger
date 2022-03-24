@@ -18,8 +18,8 @@ namespace Commands
             private readonly ILogger<PutUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
             private readonly IDatabaseContext _context;
-            private List<string> _caseEvent;
-            private List<string> _caseReaction;
+            private string _caseEvent;
+            private string _caseReaction;
 
             public PutUseCasesCommandHandler(ILogger<PutUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
@@ -27,8 +27,6 @@ namespace Commands
                 IServiceScope scope = scopeFactory.CreateScope();
                 _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                 _mapper = mapper;
-                _caseEvent = new();
-                _caseReaction = new();
             }
             public async Task<int> Handle(PutUseCasesCommand command, CancellationToken cancellationToken)
             {
@@ -41,8 +39,8 @@ namespace Commands
 
                     List<Task> tasks = new()
                     {
-                        Task.Run(async () => _caseEvent = await ConvertObject.ListJsonObjectToListString(command.CaseEvent)),
-                        Task.Run(async () => _caseReaction = await ConvertObject.ListJsonObjectToListString(command.CaseReaction))
+                        Task.Run(async () => _caseEvent = await ConvertObject.JsonObjectToStringAsync(command.CaseEvent)),
+                        Task.Run(async () => _caseReaction = await ConvertObject.JsonObjectToStringAsync(command.CaseReaction))
                     };
                     Task.WhenAll(tasks).Wait(cancellationToken);
 

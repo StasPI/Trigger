@@ -2,100 +2,115 @@
   "UserId": 1,
   "CaseName": "FirstCase",
   "Active": true,
-  "CaseEvent": [
-    {
-      "Name": "Email",
-      "Source": {
-        "Protocol": "smtp",
-        "Host": "Host1.ru",
-        "Login": "Login1",
-        "Password": "Password1"
-      },
-      "Rule": [
+  "CaseEvent": {
+      "Email": [
         {
-          "Address": null,
-          "Copy": null,
-          "Subject": null,
-          "Body": null,
-          "Attachment": null,
-          "Outgoing": false,
-          "Access": true
+          "Active": true,
+          "Status": 11,
+          "EmailSource": {
+            "Protocol": "smtp",
+            "Host": "Host1.ru",
+            "Login": "Login1",
+            "Password": "Password1"
+          },
+          "EmailRule": [
+            {
+              "Active": true,
+              "Address": null,
+              "Copy": null,
+              "Subject": null,
+              "Body": null,
+              "Attachment": null,
+              "Outgoing": false,
+              "Access": true
+            },
+            {
+              "Active": true,
+              "Address": null,
+              "Copy": null,
+              "Subject": null,
+              "Body": "tBody1",
+              "Attachment": null,
+              "Outgoing": true,
+              "Access": false
+            }
+          ]
         },
         {
-          "Address": null,
-          "Copy": null,
-          "Subject": null,
-          "Body": "tBody1",
-          "Attachment": null,
-          "Outgoing": true,
-          "Access": false
+          "Active": true,
+          "Status": 11,
+          "EmailSource": {
+            "Protocol": "smtp",
+            "Host": "Host2.ru",
+            "Login": "Login2",
+            "Password": "Password2"
+          },
+          "EmailRule": [
+            {
+              "Active": true,
+              "Address": null,
+              "Copy": null,
+              "Subject": null,
+              "Body": null,
+              "Attachment": null,
+              "Outgoing": false,
+              "Access": true
+            },
+            {
+              "Active": true,
+              "Address": null,
+              "Copy": null,
+              "Subject": "tSubject2",
+              "Body": null,
+              "Attachment": null,
+              "Outgoing": true,
+              "Access": false
+            }
+          ]
+        }
+      ],
+      "Site": [
+        {
+          "Active": true,
+          "Status": 11,
+          "SiteSource": {
+            "Url": "ya.ru"
+          },
+          "SiteRule": [
+            {
+              "Active": true,
+              "Text": "xz"
+            },
+            {
+              "Active": true,
+              "Text": "xz2"
+            }
+          ]
         }
       ]
     },
-    {
-      "Name": "Email",
-      "Source": {
-        "Protocol": "smtp",
-        "Host": "Host2.ru",
-        "Login": "Login2",
-        "Password": "Password2"
-      },
-      "Rule": [
-        {
-          "Address": null,
+  "CaseReaction": {
+    "Email": [
+      {
+        "Active": true,
+        "EmailDestination": {
+          "Address": "aa@bk.ru",
           "Copy": null,
-          "Subject": null,
-          "Body": null,
-          "Attachment": null,
-          "Outgoing": false,
-          "Access": true
-        },
-        {
-          "Address": null,
-          "Copy": null,
-          "Subject": "tSubject2",
-          "Body": null,
-          "Attachment": null,
-          "Outgoing": true,
-          "Access": false
+          "Subject": "tSubject",
+          "Body": "tBody",
+          "Attachment": null
         }
-      ]
-    },
-    {
-      "Name": "Site",
-      "Source": {
-        "Url": "ya.ru"
       },
-      "Rule": [
-        {
-          "Text": "xz"
-        },
-        {
-          "Text": "xz2"
+      {
+        "Active": true,
+        "EmailDestination": {
+          "Address": "bb@bk.ru",
+          "Copy": null,
+          "Subject": "tSubject",
+          "Body": "tBody",
+          "Attachment": null
         }
-      ]
-    }
-  ],
-  "CaseReaction": [
-    {
-      "Name": "Email",
-      "Destination": {
-        "Address": "aa@bk.ru",
-        "Copy": null,
-        "Subject": "tSubject",
-        "Body": "tBody",
-        "Attachment": null
       }
-    },
-    {
-      "Name": "Email",
-      "Destination": {
-        "Address": "bb@bk.ru",
-        "Copy": null,
-        "Subject": "tSubject",
-        "Body": "tBody",
-        "Attachment": null
-      }
-    }
-  ]
+    ]
+  }
 }

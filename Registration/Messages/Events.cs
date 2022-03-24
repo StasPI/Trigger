@@ -39,7 +39,7 @@ namespace Messages
 
             List<UseCasesSendEventDto> useCasesSendEventDto = _mapper.Map<List<UseCasesSendEventDto>>(useCases);
 
-            Parallel.ForEach(useCasesSendEventDto, async x => x.CaseEvent = await ConvertObject.ListStringToJsonObject(x.CaseEventStr));
+            Parallel.ForEach(useCasesSendEventDto, async x => x.CaseEvent = await ConvertObject.StringToJsonObjectAsync(x.CaseEventStr));
             Parallel.ForEach(useCases, x => x.SendEvent = true);
 
             await _context.SaveChangesAsync(cancellationToken);

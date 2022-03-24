@@ -4,13 +4,13 @@ namespace Helps
 {
     public static class ConvertObject
     {
-        public static Task<List<string>> ListJsonObjectToListString(List<JsonObject> jo)
+        public static async Task<string> JsonObjectToStringAsync(JsonObject jo)
         {
-            return Task.FromResult(jo.AsParallel().AsOrdered().Select(x => x.ToJsonString()).ToList());
+            return await Task.FromResult(jo.ToJsonString());
         }
-        public static Task<List<JsonObject>> ListStringToJsonObject(List<string> st)
+        public static async Task<JsonObject> StringToJsonObjectAsync(string st)
         {
-            return Task.FromResult(st.AsParallel().AsOrdered().Select(x => JsonNode.Parse(x).AsObject()).ToList());
+            return await Task.FromResult(JsonNode.Parse(st).AsObject());
         }
     }
 }

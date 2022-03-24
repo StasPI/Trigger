@@ -7,12 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="RabbitMQ.Client" Version="6.2.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Commands\Commands.csproj" />
     <ProjectReference Include="..\EntityFramework\EntityFramework.csproj" />
+    <ProjectReference Include="..\Mapping.Track\Mapping.Track.csproj" />
+    <ProjectReference Include="..\Messages\Messages.csproj" />
+    <ProjectReference Include="..\RabbitMQ\RabbitMQ.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Workers\Producer\" />
+    <Folder Include="Workers\Options\" />
   </ItemGroup>
 
 </Project>

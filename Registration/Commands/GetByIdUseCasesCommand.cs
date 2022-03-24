@@ -18,8 +18,8 @@ namespace Commands
             private readonly ILogger<GetByIdUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
             private readonly IDatabaseContext _context;
-            private List<JsonObject> _caseEvent;
-            private List<JsonObject> _caseReaction;
+            private JsonObject _caseEvent;
+            private JsonObject _caseReaction;
 
             public GetByIdUseCasesCommandHandler(ILogger<GetByIdUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
@@ -27,8 +27,6 @@ namespace Commands
                 IServiceScope scope = scopeFactory.CreateScope();
                 _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                 _mapper = mapper;
-                _caseEvent = new();
-                _caseReaction = new();
             }
 
             public async Task<UseCasesGetDto> Handle(GetByIdUseCasesCommand query, CancellationToken cancellationToken)
@@ -42,8 +40,8 @@ namespace Commands
 
                     List<Task> tasks = new()
                     {
-                        Task.Run(async () => _caseEvent = await ConvertObject.ListStringToJsonObject(useCasesGetDto.CaseEventStr)),
-                        Task.Run(async () => _caseReaction = await ConvertObject.ListStringToJsonObject(useCasesGetDto.CaseReactionStr))
+                        Task.Run(async () => _caseEvent = await ConvertObject.StringToJsonObjectAsync(useCasesGetDto.CaseEventStr)),
+                        Task.Run(async () => _caseReaction = await ConvertObject.StringToJsonObjectAsync(useCasesGetDto.CaseReactionStr))
                     };
                     Task.WhenAll(tasks).Wait(cancellationToken);
 

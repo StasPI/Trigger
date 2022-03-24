@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Entities.Manager
 {
-    public class UseCases : BaseModel
+    public class EventMessages : BaseModel
     {
         [Required]
         public int UserId { get; set; }
         [Required]
-        public bool Active { get; set; }
+        public CaseEvent CaseEvent { get; set; }
     }
 }

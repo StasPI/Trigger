@@ -8,11 +8,10 @@ namespace Entities.Registration
         public int UserId { get; set; }
         [Required]
         public string CaseName { get; set; } = "default";
-        public bool Active { get; set; } = false;
         [Required]
-        public List<string> CaseEvent { get; set; } = new List<string>();
+        public string CaseEvent { get; set; }
         [Required]
-        public List<string> CaseReaction { get; set; } = new List<string>();
+        public string CaseReaction { get; set; }
         public bool SendEvent { get; set; } = false;
         public bool SendReaction { get; set; } = false;
     }

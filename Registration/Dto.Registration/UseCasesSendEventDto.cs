@@ -9,7 +9,7 @@ namespace Dto.Registration
         public int UserId { get; set; }
         public bool Active { get; set; }
         [JsonIgnore]
-        public List<string>? CaseEventStr { get; set; }
-        public List<JsonObject> CaseEvent { get; set; }
+        public string? CaseEventStr { get; set; }
+        public JsonObject CaseEvent { get; set; }
     }
 }

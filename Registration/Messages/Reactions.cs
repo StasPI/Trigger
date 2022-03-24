@@ -38,7 +38,7 @@ namespace Messages
 
             List<UseCasesSendReactionDto> useCasesSendReactionDto = _mapper.Map<List<UseCasesSendReactionDto>>(useCases);
 
-            Parallel.ForEach(useCasesSendReactionDto, async x => x.CaseReaction = await ConvertObject.ListStringToJsonObject(x.CaseReactionStr));
+            Parallel.ForEach(useCasesSendReactionDto, async x => x.CaseReaction = await ConvertObject.StringToJsonObjectAsync(x.CaseReactionStr));
             Parallel.ForEach(useCases, x => x.SendReaction = true);
 
             await _context.SaveChangesAsync(cancellationToken);

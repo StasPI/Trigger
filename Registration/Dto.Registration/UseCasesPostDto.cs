@@ -8,9 +8,9 @@ namespace Dto.Registration
         public int UserId { get; set; }
         public string CaseName { get; set; }
         public bool Active { get; set; }
-        public List<string>? CaseEventStr { get; set; }
-        public List<JsonObject> CaseEvent { get; set; }
-        public List<string>? CaseReactionStr { get; set; }
-        public List<JsonObject> CaseReaction { get; set; }
+        public string? CaseEventStr { get; set; }
+        public JsonObject CaseEvent { get; set; }
+        public string? CaseReactionStr { get; set; }
+        public JsonObject CaseReaction { get; set; }
     }
 }

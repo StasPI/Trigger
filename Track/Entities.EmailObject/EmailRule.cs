@@ -1,6 +1,6 @@
 ﻿using Entities.Base;
 
-namespace Entities.Event
+namespace Entities.EmailObject
 {
     public class EmailRule : BaseModel
     {
