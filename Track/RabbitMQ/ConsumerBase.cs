@@ -11,7 +11,6 @@ namespace RabbitMQ
     {
         private readonly IMediator _mediator;
         private readonly ILogger<ConsumerBase> _logger;
-        protected abstract string QueueName { get; }
 
         public ConsumerBase(IMediator mediator,ConnectionFactory connectionFactory,ILogger<ConsumerBase> consumerLogger,
             ILogger<RabbitMqClientBase> logger) : base(connectionFactory, logger)

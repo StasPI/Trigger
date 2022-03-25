@@ -8,6 +8,6 @@ namespace Entities.EmailObject
         [Required]
         public EmailSource EmailSource { get; set; }
         [Required]
-        public virtual List<EmailRule> EmailRule { get; set; }
+        public List<EmailRule> EmailRule { get; set; }
     }
 }

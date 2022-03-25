@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Entities.Manager
 {
-    public class EventMessages : BaseModel
+    public class UseCases : BaseModel
     {
         [Required]
         public int UserId { get; set; }

@@ -7,8 +7,8 @@ using Messages;
 using Microsoft.EntityFrameworkCore;
 using RabbitMQ.Client;
 using System.Reflection;
-using WebApi.Workers;
-using WebApi.Workers.Consumer;
+using WebApi.Consumer;
+using WebApi.Options;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -20,14 +20,7 @@ builder.Services.AddSingleton<IMapper>(new Mapper(GetMapperConfiguration()));
 builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
     options.UseNpgsql(connectionString), ServiceLifetime.Transient);
 
-//builder.Services.AddMediatR(typeof(EventMessageHandler).GetTypeInfo().Assembly);
-
-//builder.Services.AddHostedService<WorkerReceptionist>();
-
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-builder.Services.AddTransient<IRequestHandler<EventMessage, Unit>, EventMessageHandler>();
-builder.Services.AddHostedService<ConsumerEvent>();
-
 
 builder.Services.AddSingleton(serviceProvider =>
 {
@@ -42,6 +35,13 @@ builder.Services.AddSingleton(serviceProvider =>
         DispatchConsumersAsync = true
     };
 });
+
+builder.Services.Configure<ConsumerOptions>(builder.Configuration.GetSection(ConsumerOptions.Name));
+builder.Services.AddTransient<IRequestHandler<EventMessage, Unit>, EventMessageHandler>();
+builder.Services.AddHostedService<ConsumerRegistration>();
+
+builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection(ProducerOptions.Name));
+
 
 var app = builder.Build();
 

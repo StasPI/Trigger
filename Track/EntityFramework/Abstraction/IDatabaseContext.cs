@@ -8,7 +8,7 @@ namespace EntityFramework.Abstraction
 {
     public interface IDatabaseContext : IDisposable
     {
-        DbSet<EventMessages> EventMessages { get; set; }
+        DbSet<UseCases> UseCases { get; set; }
         DbSet<CaseEvent> CaseEvent { get; set; }
         DbSet<Site> Site { get; set; }
         DbSet<SiteRule> SiteRule { get; set; }

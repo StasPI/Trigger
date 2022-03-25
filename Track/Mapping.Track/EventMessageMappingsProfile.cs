@@ -8,7 +8,7 @@ namespace Mapping.Track
     {
         public EventMessageMappingsProfile()
         {
-             CreateMap<EventMessageReceiveDto, EventMessages>()
+             CreateMap<EventMessageReceiveDto, UseCases>()
                 .ForMember(x => x.DateCreated, map => map.Ignore())
                 .ForMember(x => x.DateUpdated, map => map.Ignore())
                 .ForMember(x => x.DateDeleted, map => map.Ignore());

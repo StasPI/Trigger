@@ -22,8 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Workers\Producer\" />
-    <Folder Include="Workers\Options\" />
+    <Folder Include="Producer\" />
   </ItemGroup>
 
 </Project>

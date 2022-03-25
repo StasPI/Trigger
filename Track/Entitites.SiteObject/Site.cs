@@ -8,6 +8,6 @@ namespace Entities.SiteObject
         [Required]
         public SiteSource SiteSource { get; set; }
         [Required]
-        public virtual List<SiteRule> SiteRule { get; set; }
+        public List<SiteRule> SiteRule { get; set; }
     }
 }

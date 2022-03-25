@@ -1,29 +1,29 @@
 ﻿using MediatR;
 using Messages;
+using Microsoft.Extensions.Options;
 using RabbitMQ;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using WebApi.Options;
 
-namespace WebApi.Workers.Consumer
+namespace WebApi.Consumer
 {
-    public class ConsumerEvent : ConsumerBase, IHostedService
+    public class ConsumerRegistration : ConsumerBase, IHostedService
     {
-        public ConsumerEvent(IMediator mediator, ConnectionFactory connectionFactory, ILogger<ConsumerBase> consumerLogger, 
-            ILogger<RabbitMqClientBase> logger) : base(mediator, connectionFactory, consumerLogger, logger)
+        public ConsumerRegistration(IMediator mediator, ConnectionFactory connectionFactory, ILogger<ConsumerBase> consumerLogger, 
+            ILogger<RabbitMqClientBase> logger, IOptions<ConsumerOptions> options) : base(mediator, connectionFactory, consumerLogger, logger)
         {
             try
             {
                 var consumer = new AsyncEventingBasicConsumer(Channel);
                 consumer.Received += OnEventReceived<EventMessage>;
-                Channel.BasicConsume(queue: QueueName, autoAck: false, consumer: consumer);
+                Channel.BasicConsume(queue: options.Value.Registration.QueueName, autoAck: false, consumer: consumer);
             }
             catch (Exception ex)
             {
                 consumerLogger.LogCritical(ex, "Error while consuming message");
             }
         }
-
-        protected override string QueueName => "QueueEvent";
 
         public virtual Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
