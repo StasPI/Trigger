@@ -14,9 +14,8 @@ using WebApi.Worker.Producer;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-//options
-string connectionString = builder.Configuration.
-                      GetConnectionString("Postgres");
+//Options
+string connectionString = builder.Configuration.GetConnectionString("Postgres");
 
 builder.Services.AddSingleton<IMapper>(new Mapper(GetMapperConfiguration()));
 
@@ -26,20 +25,21 @@ builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
 builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection(WorkerOptions.Name));
 builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection(ProducerOptions.Name));
 
-//servises
+//Handlers
 builder.Services.AddMediatR(typeof(DeleteUseCasesCommand).GetTypeInfo().Assembly);
 builder.Services.AddMediatR(typeof(GetByIdUseCasesCommand).GetTypeInfo().Assembly);
 builder.Services.AddMediatR(typeof(PostUseCasesCommand).GetTypeInfo().Assembly);
 builder.Services.AddMediatR(typeof(PutUseCasesCommand).GetTypeInfo().Assembly);
-
 builder.Services.AddMediatR(typeof(EventsMessage).GetTypeInfo().Assembly);
 builder.Services.AddMediatR(typeof(ReactionsMessage).GetTypeInfo().Assembly);
 
-builder.Services.AddHostedService<WorkerEvents>();
+//RabbitMessageProducer
 builder.Services.AddSingleton<IRabbitMqProducer<EventMessageBody>, ProducerEvent>();
-
-builder.Services.AddHostedService<WorkerReactions>();
 builder.Services.AddSingleton<IRabbitMqProducer<ReactionMessageBody>, ProducerReaction>();
+
+//Workers
+builder.Services.AddHostedService<WorkerEvents>();
+builder.Services.AddHostedService<WorkerReactions>();
 
 builder.Services.AddControllers();
 
