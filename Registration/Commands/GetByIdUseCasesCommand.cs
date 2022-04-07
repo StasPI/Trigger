@@ -5,7 +5,6 @@ using EntityFramework.Abstraction;
 using Helps;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json.Nodes;
 
@@ -17,14 +16,14 @@ namespace Commands
         {
             private readonly ILogger<GetByIdUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
-            private readonly IServiceScope _scope;
+            private readonly IDatabaseContext _context;
             private JsonObject _caseEvent;
             private JsonObject _caseReaction;
 
-            public GetByIdUseCasesCommandHandler(ILogger<GetByIdUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
+            public GetByIdUseCasesCommandHandler(ILogger<GetByIdUseCasesCommandHandler> logger, IMapper mapper, IDatabaseContext context)
             {
                 _logger = logger;
-                _scope = scopeFactory.CreateScope();
+                _context = context;
                 _mapper = mapper;
             }
 
@@ -32,9 +31,8 @@ namespace Commands
             {
                 try
                 {
-                    IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                     _logger.LogInformation("GetByIdUseCasesCommandHandler Get UseCase: {id} | Time: {time}", query.Id, DateTimeOffset.Now);
-                    UseCases useCases = await context.UseCases.Where(x => (x.Id == query.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
+                    UseCases useCases = await _context.UseCases.Where(x => (x.Id == query.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
 
                     UseCasesGetDto useCasesGetDto = _mapper.Map<UseCasesGetDto>(useCases);
 

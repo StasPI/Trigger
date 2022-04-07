@@ -2,31 +2,29 @@
 using EntityFramework.Abstraction;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Commands
 {
-	public class DeleteUseCasesCommand : IRequest<int>
+    public class DeleteUseCasesCommand : IRequest<int>
     {
         public int Id { get; set; }
         public class DeleteUseCasesCommandHandler : IRequestHandler<DeleteUseCasesCommand, int>
         {
             private readonly ILogger<DeleteUseCasesCommandHandler> _logger;
-            private readonly IServiceScope _scope;
+            private readonly IDatabaseContext _context;
 
-            public DeleteUseCasesCommandHandler(ILogger<DeleteUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory)
+            public DeleteUseCasesCommandHandler(ILogger<DeleteUseCasesCommandHandler> logger, IDatabaseContext context)
             {
                 _logger = logger;
-                _scope = scopeFactory.CreateScope();
+                _context = context;
             }
             public async Task<int> Handle(DeleteUseCasesCommand command, CancellationToken cancellationToken)
             {
                 try
                 {
-                    IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                     _logger.LogInformation("DeleteUseCasesCommandHandler Delete UseCase: {id} | Time: {time}", command.Id, DateTimeOffset.Now);
-                    UseCases useCases = await context.UseCases.Where(x => (x.Id == command.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
+                    UseCases useCases = await _context.UseCases.Where(x => (x.Id == command.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
 
                     useCases.DateDeleted = DateTime.UtcNow;
                     useCases.DateUpdated = DateTime.UtcNow;
@@ -34,7 +32,7 @@ namespace Commands
                     useCases.SendEvent = false;
                     useCases.SendReaction = false;
 
-                    await context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
 
                     return useCases.Id;
                 }

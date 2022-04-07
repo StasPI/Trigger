@@ -2,7 +2,7 @@
 
 namespace Messages
 {
-    public class EventMessage
+    public class EventMessageBody
     {
         public List<UseCasesSendEventDto> EventMessages { get; set; }
     }

@@ -4,7 +4,6 @@ using EntityFramework;
 using EntityFramework.Abstraction;
 using MediatR;
 using Messages;
-using Messages.Abstraction;
 using Microsoft.EntityFrameworkCore;
 using RabbitMQ.Abstraction;
 using RabbitMQ.Client;
@@ -15,6 +14,7 @@ using WebApi.Worker.Producer;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+//options
 string connectionString = builder.Configuration.
                       GetConnectionString("Postgres");
 
@@ -23,7 +23,23 @@ builder.Services.AddSingleton<IMapper>(new Mapper(GetMapperConfiguration()));
 builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
     options.UseNpgsql(connectionString), ServiceLifetime.Transient);
 
+builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection(WorkerOptions.Name));
+builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection(ProducerOptions.Name));
+
+//servises
+builder.Services.AddMediatR(typeof(DeleteUseCasesCommand).GetTypeInfo().Assembly);
+builder.Services.AddMediatR(typeof(GetByIdUseCasesCommand).GetTypeInfo().Assembly);
 builder.Services.AddMediatR(typeof(PostUseCasesCommand).GetTypeInfo().Assembly);
+builder.Services.AddMediatR(typeof(PutUseCasesCommand).GetTypeInfo().Assembly);
+
+builder.Services.AddMediatR(typeof(EventsMessage).GetTypeInfo().Assembly);
+builder.Services.AddMediatR(typeof(ReactionsMessage).GetTypeInfo().Assembly);
+
+builder.Services.AddHostedService<WorkerEvents>();
+builder.Services.AddSingleton<IRabbitMqProducer<EventMessageBody>, ProducerEvent>();
+
+builder.Services.AddHostedService<WorkerReactions>();
+builder.Services.AddSingleton<IRabbitMqProducer<ReactionMessageBody>, ProducerReaction>();
 
 builder.Services.AddControllers();
 
@@ -39,17 +55,6 @@ builder.Services.AddSingleton(serviceProvider =>
         ContinuationTimeout = new TimeSpan(10, 0, 0, 0),
     };
 });
-
-builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection(WorkerOptions.Name));
-builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection(ProducerOptions.Name));
-
-builder.Services.AddHostedService<WorkerEvents>();
-builder.Services.AddSingleton<IEvents, Events>();
-builder.Services.AddSingleton<IRabbitMqProducer<EventMessage>, ProducerEvent>();
-
-builder.Services.AddHostedService<WorkerReactions>();
-builder.Services.AddSingleton<IReactions, Reactions>();
-builder.Services.AddSingleton<IRabbitMqProducer<ReactionMessage>, ProducerReaction>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

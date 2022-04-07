@@ -6,7 +6,7 @@ using Messages;
 
 namespace WebApi.Worker.Producer
 {
-    public class ProducerReaction : ProducerBase<ReactionMessage>
+    public class ProducerReaction : ProducerBase<ReactionMessageBody>
     {
         private readonly ProducerOptions _options;
         private readonly string _exchangeName;
@@ -16,7 +16,7 @@ namespace WebApi.Worker.Producer
         protected override string RoutingKeyName => _routingKeyName;
         protected override string AppId => _appId;
         public ProducerReaction(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger,
-            ILogger<ProducerBase<ReactionMessage>> producerBaseLogger, IOptions<ProducerOptions> options)
+            ILogger<ProducerBase<ReactionMessageBody>> producerBaseLogger, IOptions<ProducerOptions> options)
             : base(connectionFactory, logger, producerBaseLogger)
         {
             _options = options.Value;

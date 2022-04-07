@@ -1,12 +1,10 @@
-﻿using AutoMapper;
-using Dto.Registration;
+﻿using Dto.Registration;
 using Entities.Registration;
 using EntityFramework.Abstraction;
 using Helps;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Commands
@@ -16,25 +14,23 @@ namespace Commands
         public class PutUseCasesCommandHandler : IRequestHandler<PutUseCasesCommand, int>
         {
             private readonly ILogger<PutUseCasesCommandHandler> _logger;
-            private readonly IServiceScope _scope;
-            private readonly IMapper _mapper;
+            private readonly IDatabaseContext _context;
             private string _caseEvent;
             private string _caseReaction;
 
-            public PutUseCasesCommandHandler(ILogger<PutUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory)
+            public PutUseCasesCommandHandler(ILogger<PutUseCasesCommandHandler> logger, IDatabaseContext context)
             {
                 _logger = logger;
-                _scope = scopeFactory.CreateScope();
+                _context = context;
             }
             public async Task<int> Handle(PutUseCasesCommand command, CancellationToken cancellationToken)
             {
-                IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
-                using IDbContextTransaction transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+                using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
                 try
                 {
                     _logger.LogInformation("PutUseCasesCommandHandler Put UseCase: {id} | Time: {time}", command.Id, DateTimeOffset.Now);
-                    UseCases useCases = await context.UseCases.Where(x => (x.Id == command.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
+                    UseCases useCases = await _context.UseCases.Where(x => (x.Id == command.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
 
                     List<Task> tasks = new()
                     {
@@ -60,7 +56,7 @@ namespace Commands
                     useCases.CaseReaction = _caseReaction;
                     useCases.Active = command.Active;
 
-                    await context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
 
                     return useCases.Id;

@@ -5,7 +5,6 @@ using EntityFramework.Abstraction;
 using Helps;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Commands
@@ -16,21 +15,20 @@ namespace Commands
         {
             private readonly ILogger<PostUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
-            private readonly IServiceScope _scope;
+            private readonly IDatabaseContext _context;
             private string _caseEvent;
             private string _caseReaction;
 
-            public PostUseCasesCommandHandler(ILogger<PostUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
+            public PostUseCasesCommandHandler(ILogger<PostUseCasesCommandHandler> logger, IMapper mapper, IDatabaseContext context)
             {
                 _logger = logger;
-                _scope = scopeFactory.CreateScope();
                 _mapper = mapper;
+                _context = context;
             }
 
             public async Task<int> Handle(PostUseCasesCommand command, CancellationToken cancellationToken)
             {
-                IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
-                using IDbContextTransaction transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+                using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
                 try
                 {
@@ -53,9 +51,9 @@ namespace Commands
 
                     UseCases useCases = _mapper.Map<UseCases>(useCasesPostDto);
 
-                    await context.UseCases.AddAsync(useCases, cancellationToken);
+                    await _context.UseCases.AddAsync(useCases, cancellationToken);
 
-                    await context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
 
                     _logger.LogInformation("PostUseCasesCommandHandler Post UseCase: {id} | Time: {time}", useCases.Id, DateTimeOffset.Now);
 

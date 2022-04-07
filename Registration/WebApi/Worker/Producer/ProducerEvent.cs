@@ -6,7 +6,7 @@ using Messages;
 
 namespace WebApi.Worker.Producer
 {
-    public class ProducerEvent : ProducerBase<EventMessage>
+    public class ProducerEvent : ProducerBase<EventMessageBody>
     {
         private readonly ProducerOptions _options;
         private readonly string _exchangeName;
@@ -16,7 +16,7 @@ namespace WebApi.Worker.Producer
         protected override string RoutingKeyName => _routingKeyName;
         protected override string AppId => _appId;
         public ProducerEvent(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger, 
-            ILogger<ProducerBase<EventMessage>> producerBaseLogger, IOptions<ProducerOptions> options)
+            ILogger<ProducerBase<EventMessageBody>> producerBaseLogger, IOptions<ProducerOptions> options)
             :base(connectionFactory, logger, producerBaseLogger)
         {
             _options = options.Value;
