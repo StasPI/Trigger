@@ -15,7 +15,7 @@ namespace Mapping.Registration
                 .ForMember(x => x.CaseReactionStr, map => map.MapFrom(src => src.CaseReaction));
 
             CreateMap<UseCasesPostDto, UseCases>()
-                .ForMember(x => x.Id, map => map.Ignore())
+                //.ForMember(x => x.Id, map => map.Ignore())
                 .ForMember(x => x.DateCreated, map => map.Ignore())
                 .ForMember(x => x.DateUpdated, map => map.Ignore())
                 .ForMember(x => x.DateDeleted, map => map.Ignore())

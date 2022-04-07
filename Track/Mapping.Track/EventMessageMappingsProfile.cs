@@ -11,7 +11,8 @@ namespace Mapping.Track
              CreateMap<EventMessageReceiveDto, UseCases>()
                 .ForMember(x => x.DateCreated, map => map.Ignore())
                 .ForMember(x => x.DateUpdated, map => map.Ignore())
-                .ForMember(x => x.DateDeleted, map => map.Ignore());
+                .ForMember(x => x.DateDeleted, map => map.Ignore())
+                .ForMember(x => x.Id, map => map.MapFrom(src => src.Id));
         }
     }
 }

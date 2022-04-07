@@ -33,12 +33,12 @@ namespace WebApi.Worker
 
                     if (eventMessage.EventMessages.Count > 0) _producer.Publish(eventMessage);
 
-                    await _events.CommitAsync(cancellationToken);
+                    await _events.CommitSendAsync(cancellationToken);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogInformation("WorkerEvents Time: {time} | Exception: {ex}", DateTimeOffset.Now, ex);
-                    await _events.RollbackAsync(cancellationToken);
+                    await _events.RollbackSendAsync(cancellationToken);
                 }
                 finally
                 {

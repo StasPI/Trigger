@@ -16,23 +16,21 @@ namespace Commands
         {
             private readonly ILogger<PostUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
-            private readonly IDatabaseContext _context;
+            private readonly IServiceScope _scope;
             private string _caseEvent;
             private string _caseReaction;
-            private readonly UseCasesPostDto _useCasesPostDto;
 
             public PostUseCasesCommandHandler(ILogger<PostUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
                 _logger = logger;
-                IServiceScope scope = scopeFactory.CreateScope();
-                _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+                _scope = scopeFactory.CreateScope();
                 _mapper = mapper;
-                _useCasesPostDto = new();
             }
 
             public async Task<int> Handle(PostUseCasesCommand command, CancellationToken cancellationToken)
             {
-                using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+                IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+                using IDbContextTransaction transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
                 try
                 {
@@ -44,17 +42,20 @@ namespace Commands
                     };
                     Task.WhenAll(tasks).Wait(cancellationToken);
 
-                    _useCasesPostDto.UserId = command.UserId;
-                    _useCasesPostDto.CaseName = command.CaseName;
-                    _useCasesPostDto.CaseEventStr = _caseEvent;
-                    _useCasesPostDto.CaseReactionStr = _caseReaction;
-                    _useCasesPostDto.Active = command.Active;
+                    UseCasesPostDto useCasesPostDto = new()
+                    {
+                        UserId = command.UserId,
+                        CaseName = command.CaseName,
+                        CaseEventStr = _caseEvent,
+                        CaseReactionStr = _caseReaction,
+                        Active = command.Active
+                    };
 
-                    UseCases useCases = _mapper.Map<UseCases>(_useCasesPostDto);
+                    UseCases useCases = _mapper.Map<UseCases>(useCasesPostDto);
 
-                    await _context.UseCases.AddAsync(useCases, cancellationToken);
+                    await context.UseCases.AddAsync(useCases, cancellationToken);
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                    await context.SaveChangesAsync(cancellationToken);
 
                     _logger.LogInformation("PostUseCasesCommandHandler Post UseCase: {id} | Time: {time}", useCases.Id, DateTimeOffset.Now);
 

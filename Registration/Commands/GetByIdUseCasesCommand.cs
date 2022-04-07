@@ -17,15 +17,14 @@ namespace Commands
         {
             private readonly ILogger<GetByIdUseCasesCommandHandler> _logger;
             private readonly IMapper _mapper;
-            private readonly IDatabaseContext _context;
+            private readonly IServiceScope _scope;
             private JsonObject _caseEvent;
             private JsonObject _caseReaction;
 
             public GetByIdUseCasesCommandHandler(ILogger<GetByIdUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
             {
                 _logger = logger;
-                IServiceScope scope = scopeFactory.CreateScope();
-                _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+                _scope = scopeFactory.CreateScope();
                 _mapper = mapper;
             }
 
@@ -33,8 +32,9 @@ namespace Commands
             {
                 try
                 {
+                    IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
                     _logger.LogInformation("GetByIdUseCasesCommandHandler Get UseCase: {id} | Time: {time}", query.Id, DateTimeOffset.Now);
-                    UseCases useCases = await _context.UseCases.Where(x => (x.Id == query.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
+                    UseCases useCases = await context.UseCases.Where(x => (x.Id == query.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
 
                     UseCasesGetDto useCasesGetDto = _mapper.Map<UseCasesGetDto>(useCases);
 

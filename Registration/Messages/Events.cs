@@ -15,25 +15,25 @@ namespace Messages
     {
         private readonly ILogger<Events> _logger;
         private readonly IMapper _mapper;
-        private readonly IDatabaseContext _context;
         private IDbContextTransaction transaction;
         private List<UseCases> useCases;
+        private readonly IServiceScope _scope;
 
         public Events(ILogger<Events> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
         {
             _logger = logger;
             _mapper = mapper;
-            IServiceScope scope = scopeFactory.CreateScope();
-            _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+            _scope = scopeFactory.CreateScope();
         }
 
         public async Task<List<UseCasesSendEventDto>> GetMessageAsync(int maxMessagesEvents, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Events Generates a list of unsent events Time: {time}", DateTimeOffset.Now);
-            transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+            transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
-            useCases = await _context.UseCases
-                .Where(x => x.SendEvent == false)
+            useCases = await context.UseCases
+                .Where(x => (x.SendEvent == false))
                 .Take(maxMessagesEvents)
                 .ToListAsync(cancellationToken);
 
@@ -42,18 +42,17 @@ namespace Messages
             Parallel.ForEach(useCasesSendEventDto, async x => x.CaseEvent = await ConvertObject.StringToJsonObjectAsync(x.CaseEventStr));
             Parallel.ForEach(useCases, x => x.SendEvent = true);
 
-            await _context.SaveChangesAsync(cancellationToken);
-
+            await context.SaveChangesAsync(cancellationToken);
             return useCasesSendEventDto;
         }
 
-        public async Task CommitAsync(CancellationToken cancellationToken)
+        public async Task CommitSendAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Event transaction commit Time: {time}", DateTimeOffset.Now);
             await transaction.CommitAsync(cancellationToken);
         }
 
-        public async Task RollbackAsync(CancellationToken cancellationToken)
+        public async Task RollbackSendAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Event transaction rollback Time: {time}", DateTimeOffset.Now);
             await transaction.RollbackAsync(cancellationToken);

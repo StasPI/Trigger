@@ -16,26 +16,25 @@ namespace Commands
         public class PutUseCasesCommandHandler : IRequestHandler<PutUseCasesCommand, int>
         {
             private readonly ILogger<PutUseCasesCommandHandler> _logger;
+            private readonly IServiceScope _scope;
             private readonly IMapper _mapper;
-            private readonly IDatabaseContext _context;
             private string _caseEvent;
             private string _caseReaction;
 
-            public PutUseCasesCommandHandler(ILogger<PutUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
+            public PutUseCasesCommandHandler(ILogger<PutUseCasesCommandHandler> logger, IServiceScopeFactory scopeFactory)
             {
                 _logger = logger;
-                IServiceScope scope = scopeFactory.CreateScope();
-                _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
-                _mapper = mapper;
+                _scope = scopeFactory.CreateScope();
             }
             public async Task<int> Handle(PutUseCasesCommand command, CancellationToken cancellationToken)
             {
-                using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+                IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+                using IDbContextTransaction transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
                 try
                 {
                     _logger.LogInformation("PutUseCasesCommandHandler Put UseCase: {id} | Time: {time}", command.Id, DateTimeOffset.Now);
-                    UseCases useCases = await _context.UseCases.Where(x => (x.Id == command.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
+                    UseCases useCases = await context.UseCases.Where(x => (x.Id == command.Id) & (x.DateDeleted == null)).FirstAsync(cancellationToken);
 
                     List<Task> tasks = new()
                     {
@@ -44,31 +43,24 @@ namespace Commands
                     };
                     Task.WhenAll(tasks).Wait(cancellationToken);
 
-                    if (useCases.CaseName != command.CaseName)
-                    {
-                        useCases.CaseName = command.CaseName;
-                    }
-
-                    if (useCases.Active != command.Active)
-                    {
-                        useCases.Active = command.Active;
-                        useCases.SendEvent = false;
-                        useCases.SendReaction = false;
-                    }
-                    
                     if (!useCases.CaseEvent.SequenceEqual(_caseEvent))
                     {
-                        useCases.CaseEvent = _caseEvent;
                         useCases.SendEvent = false;
                     }
 
                     if (!useCases.CaseReaction.SequenceEqual(_caseReaction))
                     {
-                        useCases.CaseReaction = _caseReaction;
                         useCases.SendReaction = false;
                     }
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                    useCases.DateUpdated = DateTime.UtcNow;
+                    useCases.UserId = command.UserId;
+                    useCases.CaseName = command.CaseName;
+                    useCases.CaseEvent = _caseEvent;
+                    useCases.CaseReaction = _caseReaction;
+                    useCases.Active = command.Active;
+
+                    await context.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
 
                     return useCases.Id;

@@ -6,6 +6,8 @@ namespace Entities.EmailObject
     public class EmailSource : BaseModel
     {
         [Required]
+        public int EmailId { get; set; }
+        [Required]
         public string Protocol { get; set; }
         [Required]
         public string Host { get; set; }

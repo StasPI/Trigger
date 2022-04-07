@@ -3,6 +3,7 @@ using Entities.Manager;
 using EntityFramework.Abstraction;
 using MediatR;
 using Messages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,27 +14,42 @@ namespace Commands
     {
         private readonly ILogger<EventMessageHandler> _logger;
         private readonly IMapper _mapper;
-        private readonly IDatabaseContext _context;
+        private readonly IServiceScope _scope;
 
         public EventMessageHandler(ILogger<EventMessageHandler> logger, IServiceScopeFactory scopeFactory, IMapper mapper)
         {
             _logger = logger;
-            IServiceScope scope = scopeFactory.CreateScope();
-            _context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+            _scope = scopeFactory.CreateScope();
             _mapper = mapper;
         }
 
         public async Task<Unit> Handle(EventMessage request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("EventMessageHandler Received message: {Message}", request.EventMessages);
-            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            using IDatabaseContext context = _scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+            using IDbContextTransaction transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
-            List<UseCases> useCases = _mapper.Map<List<UseCases>>(request.EventMessages);
+            foreach(var uc in request.EventMessages)
+            {
+                UseCases useCases = await context.UseCases.Where(x => (x.Id == uc.Id)).FirstOrDefaultAsync(cancellationToken);
+                if (useCases != null)
+                {
+                    //var a = _mapper.Map<UseCases>(uc);
+                    //context.UseCases.Update(_mapper.Map<UseCases>(uc));
+                    useCases.UserId = uc.UserId;
+                    useCases.Active = uc.Active;
+                    useCases.CaseEvent = uc.CaseEvent;
+                    useCases.CaseEvent.Email = uc.CaseEvent.Email;
+                    useCases.CaseEvent.Site = uc.CaseEvent.Site;
+                    //useCases = _mapper.Map<UseCases>(uc);
+                }
+                else
+                {
+                    await context.UseCases.AddAsync(_mapper.Map<UseCases>(uc), cancellationToken);
+                }
+            }
 
-            await _context.UseCases.AddRangeAsync(useCases, cancellationToken);
-
-            await _context.SaveChangesAsync(cancellationToken);
-
+            await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
             return await Task.FromResult(Unit.Value);
