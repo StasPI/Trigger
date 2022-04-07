@@ -1,4 +1,4 @@
-﻿namespace WebApi.Worker.Options
+﻿namespace Options
 {
     public class ProducerOptions
     {

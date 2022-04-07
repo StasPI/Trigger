@@ -1,12 +1,14 @@
 ﻿using Dto.Registration;
 using MediatR;
 using Messages;
-using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Options;
 using RabbitMQ.Abstraction;
-using WebApi.Worker.Options;
 
-namespace WebApi.Worker
+namespace Workers
 {
     public class WorkerEvents : BackgroundService
     {
@@ -14,7 +16,7 @@ namespace WebApi.Worker
         private readonly WorkerOptions _options;
         private readonly IRabbitMqProducer<EventMessageBody> _producer;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private Tuple<IDbContextTransaction, List<UseCasesSendEventDto>> _tuple; 
+        private TransitBody<UseCasesSendEventDto> _transitBody;
 
         public WorkerEvents(IRabbitMqProducer<EventMessageBody> producer, ILogger<WorkerEvents> logger,
             IOptions<WorkerOptions> options, IServiceScopeFactory serviceScopeFactory)
@@ -38,21 +40,21 @@ namespace WebApi.Worker
 
                     EventsMessage eventsMessage = new() { maxMessagesEvents = _options.Events.MaxMessages };
 
-                    _tuple = await mediator.Send(eventsMessage, cancellationToken);
+                    _transitBody = await mediator.Send(eventsMessage, cancellationToken);
 
                     EventMessageBody eventMessageBody = new()
                     {
-                        EventMessages = _tuple.Item2
+                        EventMessages = _transitBody.Messages
                     };
 
                     if (eventMessageBody.EventMessages.Count > 0) _producer.Publish(eventMessageBody);
 
-                    await _tuple.Item1.CommitAsync(cancellationToken);
+                    await _transitBody.Transaction.CommitAsync(cancellationToken);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogInformation("WorkerEvents Time: {time} | Exception: {ex}", DateTimeOffset.Now, ex);
-                    await _tuple.Item1.RollbackAsync(cancellationToken);
+                    await _transitBody.Transaction.RollbackAsync(cancellationToken);
                 }
                 finally
                 {

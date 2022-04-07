@@ -1,12 +1,14 @@
-﻿using Microsoft.Extensions.Options;
-using RabbitMQ.Abstraction;
-using WebApi.Worker.Options;
-using Messages;
-using Microsoft.EntityFrameworkCore.Storage;
-using Dto.Registration;
+﻿using Dto.Registration;
 using MediatR;
+using Messages;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Options;
+using RabbitMQ.Abstraction;
 
-namespace WebApi.Worker
+namespace Workers
 {
     public class WorkerReactions : BackgroundService
     {
@@ -14,9 +16,9 @@ namespace WebApi.Worker
         private readonly WorkerOptions _options;
         private readonly IRabbitMqProducer<ReactionMessageBody> _producer;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private Tuple<IDbContextTransaction, List<UseCasesSendReactionDto>> _tuple;
+        private TransitBody<UseCasesSendReactionDto> _transitBody;
 
-        public WorkerReactions(IRabbitMqProducer<ReactionMessageBody> producer, ILogger<WorkerReactions> logger, 
+        public WorkerReactions(IRabbitMqProducer<ReactionMessageBody> producer, ILogger<WorkerReactions> logger,
             IOptions<WorkerOptions> options, IServiceScopeFactory serviceScopeFactory)
         {
             _producer = producer;
@@ -38,21 +40,21 @@ namespace WebApi.Worker
 
                     ReactionsMessage reactionsMessage = new() { maxMessagesReactions = _options.Reactions.MaxMessages };
 
-                    _tuple = await mediator.Send(reactionsMessage, cancellationToken);
+                    _transitBody = await mediator.Send(reactionsMessage, cancellationToken);
 
                     ReactionMessageBody reactionMessageBody = new()
                     {
-                        ReactionMessages = _tuple.Item2
+                        ReactionMessages = _transitBody.Messages
                     };
 
                     if (reactionMessageBody.ReactionMessages.Count > 0) _producer.Publish(reactionMessageBody);
 
-                    await _tuple.Item1.CommitAsync(cancellationToken);
+                    await _transitBody.Transaction.CommitAsync(cancellationToken);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogInformation("WorkerReactions Time: {time} | Exception: {ex}", DateTimeOffset.Now, ex);
-                    await _tuple.Item1.RollbackAsync(cancellationToken);
+                    await _transitBody.Transaction.RollbackAsync(cancellationToken);
                 }
                 finally
                 {

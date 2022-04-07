@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Messages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Options;
 using RabbitMQ;
 using RabbitMQ.Client;
-using WebApi.Worker.Options;
-using Messages;
 
-namespace WebApi.Worker.Producer
+namespace Rabbit
 {
     public class ProducerReaction : ProducerBase<ReactionMessageBody>
     {

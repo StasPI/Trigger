@@ -13,7 +13,7 @@ namespace RabbitMQ
         protected abstract string RoutingKeyName { get; }
         protected abstract string AppId { get; }
 
-        protected ProducerBase(ConnectionFactory connectionFactory,ILogger<RabbitMqClientBase> logger,ILogger<ProducerBase<T>> producerBaseLogger) 
+        protected ProducerBase(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger, ILogger<ProducerBase<T>> producerBaseLogger)
             : base(connectionFactory, logger) => _logger = producerBaseLogger;
 
         public virtual void Publish(T @event)

@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Messages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Options;
 using RabbitMQ;
 using RabbitMQ.Client;
-using WebApi.Worker.Options;
-using Messages;
 
-namespace WebApi.Worker.Producer
+namespace Rabbit
 {
     public class ProducerEvent : ProducerBase<EventMessageBody>
     {
@@ -15,9 +16,9 @@ namespace WebApi.Worker.Producer
         protected override string ExchangeName => _exchangeName;
         protected override string RoutingKeyName => _routingKeyName;
         protected override string AppId => _appId;
-        public ProducerEvent(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger, 
+        public ProducerEvent(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger,
             ILogger<ProducerBase<EventMessageBody>> producerBaseLogger, IOptions<ProducerOptions> options)
-            :base(connectionFactory, logger, producerBaseLogger)
+            : base(connectionFactory, logger, producerBaseLogger)
         {
             _options = options.Value;
             _exchangeName = _options.Events.ExchangeName;
