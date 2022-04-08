@@ -32,9 +32,9 @@ namespace Workers
             {
                 try
                 {
-                    IMediator mediator = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IMediator>();
-
                     _logger.LogInformation("WorkerReactions run at Time: {time}", DateTimeOffset.Now);
+
+                    IMediator mediator = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IMediator>();
 
                     ReactionsMessage reactionsMessage = new() { maxMessagesReactions = _options.Reactions.MaxMessages };
 
