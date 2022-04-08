@@ -1,5 +1,4 @@
-﻿using Dto.Registration;
-using MediatR;
+﻿using MediatR;
 using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,7 +15,7 @@ namespace Workers
         private readonly WorkerOptions _options;
         private readonly IRabbitMqProducer<EventMessageBody> _producer;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private TransitBody<UseCasesSendEventDto> _transitBody;
+        private TransitBody<EventMessageBody> _transitBody;
 
         public WorkerEvents(IRabbitMqProducer<EventMessageBody> producer, ILogger<WorkerEvents> logger,
             IOptions<WorkerOptions> options, IServiceScopeFactory serviceScopeFactory)
@@ -29,26 +28,19 @@ namespace Workers
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
+                    IMediator mediator = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IMediator>();
+
                     _logger.LogInformation("WorkerEvents run at Time: {time}", DateTimeOffset.Now);
 
                     EventsMessage eventsMessage = new() { maxMessagesEvents = _options.Events.MaxMessages };
 
                     _transitBody = await mediator.Send(eventsMessage, cancellationToken);
 
-                    EventMessageBody eventMessageBody = new()
-                    {
-                        EventMessages = _transitBody.Messages
-                    };
-
-                    if (eventMessageBody.EventMessages.Count > 0) _producer.Publish(eventMessageBody);
-
+                    if (_transitBody.Messages.EventMessages.Count > 0) _producer.Publish(_transitBody.Messages);
                     await _transitBody.Transaction.CommitAsync(cancellationToken);
                 }
                 catch (Exception ex)
@@ -58,6 +50,7 @@ namespace Workers
                 }
                 finally
                 {
+                    await _transitBody.Transaction.DisposeAsync();
                     await Task.Delay(_options.Events.DelayMs, cancellationToken);
                 }
             }

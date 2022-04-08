@@ -1,5 +1,4 @@
-﻿using Dto.Registration;
-using MediatR;
+﻿using MediatR;
 using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,7 +15,7 @@ namespace Workers
         private readonly WorkerOptions _options;
         private readonly IRabbitMqProducer<ReactionMessageBody> _producer;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private TransitBody<UseCasesSendReactionDto> _transitBody;
+        private TransitBody<ReactionMessageBody> _transitBody;
 
         public WorkerReactions(IRabbitMqProducer<ReactionMessageBody> producer, ILogger<WorkerReactions> logger,
             IOptions<WorkerOptions> options, IServiceScopeFactory serviceScopeFactory)
@@ -29,26 +28,19 @@ namespace Workers
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
+                    IMediator mediator = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IMediator>();
+
                     _logger.LogInformation("WorkerReactions run at Time: {time}", DateTimeOffset.Now);
 
                     ReactionsMessage reactionsMessage = new() { maxMessagesReactions = _options.Reactions.MaxMessages };
 
                     _transitBody = await mediator.Send(reactionsMessage, cancellationToken);
 
-                    ReactionMessageBody reactionMessageBody = new()
-                    {
-                        ReactionMessages = _transitBody.Messages
-                    };
-
-                    if (reactionMessageBody.ReactionMessages.Count > 0) _producer.Publish(reactionMessageBody);
-
+                    if (_transitBody.Messages.ReactionMessages.Count > 0) _producer.Publish(_transitBody.Messages);
                     await _transitBody.Transaction.CommitAsync(cancellationToken);
                 }
                 catch (Exception ex)
@@ -58,6 +50,7 @@ namespace Workers
                 }
                 finally
                 {
+                    await _transitBody.Transaction.DisposeAsync();
                     await Task.Delay(_options.Reactions.DelayMs, cancellationToken);
                 }
             }

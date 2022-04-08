@@ -19,14 +19,21 @@ namespace RabbitMQ
 
         private void ConnectToRabbitMq()
         {
-            if (_connection == null || _connection.IsOpen == false)
+            try
             {
-                _connection = _connectionFactory.CreateConnection();
-            }
+                if (_connection == null || _connection.IsOpen == false)
+                {
+                    _connection = _connectionFactory.CreateConnection();
+                }
 
-            if (Channel == null || Channel.IsOpen == false)
+                if (Channel == null || Channel.IsOpen == false)
+                {
+                    Channel = _connection.CreateModel();
+                }
+            }
+            catch (Exception ex)
             {
-                Channel = _connection.CreateModel();
+               _logger.LogError(ex, "Cannot dispose RabbitMQ channel or connection");
             }
         }
 

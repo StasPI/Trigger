@@ -31,6 +31,7 @@ namespace RabbitMQ
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Error while publishing");
+                throw;
             }
         }
     }
