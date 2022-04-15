@@ -1,5 +1,6 @@
 ﻿using Extensions;
 using Messages;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Options;
 using Rabbit;
@@ -13,6 +14,9 @@ namespace Modules
     {
         public override void Load(IServiceCollection services)
         {
+
+            RabbitMQOptions settings = Configuration.GetSection(RabbitMQOptions.Name).Get<RabbitMQOptions>();
+
             services.AddSingleton<IRabbitMqProducer<EventMessageBody>, ProducerEvent>();
             services.AddSingleton<IRabbitMqProducer<ReactionMessageBody>, ProducerReaction>();
 
@@ -20,16 +24,16 @@ namespace Modules
             {
                 return new ConnectionFactory
                 {
-                    UserName = "sa",
-                    Password = "Password1",
-                    HostName = "localhost",
-                    Port = 5800,
-                    VirtualHost = "/",
+                    UserName = settings.UserName,
+                    Password = settings.Password,
+                    HostName = settings.HostName,
+                    Port = settings.Port,
+                    VirtualHost = settings.VirtualHost,
                     ContinuationTimeout = new TimeSpan(10, 0, 0, 0),
                 };
             });
 
-            services.Configure<ProducerOptions>(Configuration.GetSection(ProducerOptions.Name));
+            services.Configure<RabbitMQOptions>(Configuration.GetSection(RabbitMQOptions.Name));
         }
     }
 }
