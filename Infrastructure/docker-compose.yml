@@ -31,7 +31,10 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: Password1
     volumes:
-      - local_pgdata:/var/lib/postgresql/data
+      #- postgres_data:/var/lib/postgresql/data
+      - type: bind
+        source: ./etc/postgresql/data
+        target: /var/lib/postgresql/data
 
 #UI http://localhost:5050/browser/
   pgadmin:
@@ -48,5 +51,5 @@ services:
       - ./etc/pgadmin/pgpass:/pgadmin4/pgpass # passwords for the connections in this file
 
 volumes:
-  local_pgdata:
+  #postgres_data:
   pgadmin-data:
