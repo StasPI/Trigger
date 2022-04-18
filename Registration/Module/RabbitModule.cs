@@ -14,7 +14,6 @@ namespace Modules
     {
         public override void Load(IServiceCollection services)
         {
-
             RabbitMQOptions settings = Configuration.GetSection(RabbitMQOptions.Name).Get<RabbitMQOptions>();
 
             services.AddSingleton<IRabbitMqProducer<EventMessageBody>, ProducerEvent>();

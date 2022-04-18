@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Trigger",
+      "Group": "Servers",
+      "Host": "PostgreSQL",
+      "Port": 5432,
+      "MaintenanceDB": "postgres",
+      "Username": "StasPI",
+      "PassFile": "/pgpassfile",
+      "SSLMode": "prefer"
+    }
+  }
+}

@@ -12,6 +12,8 @@ namespace RabbitMQ
         protected abstract string ExchangeName { get; }
         protected abstract string RoutingKeyName { get; }
         protected abstract string AppId { get; }
+        protected abstract string ContentType { get; }
+        protected abstract byte DeliveryMode { get; }
 
         protected ProducerBase(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger, ILogger<ProducerBase<T>> producerBaseLogger)
             : base(connectionFactory, logger) => _logger = producerBaseLogger;
@@ -23,8 +25,8 @@ namespace RabbitMQ
                 var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(@event));
                 var properties = Channel.CreateBasicProperties();
                 properties.AppId = AppId;
-                properties.ContentType = "application/json";
-                properties.DeliveryMode = 1; // Doesn't persist to disk
+                properties.ContentType = ContentType;
+                properties.DeliveryMode = DeliveryMode;
                 properties.Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                 Channel.BasicPublish(exchange: ExchangeName, routingKey: RoutingKeyName, body: body, basicProperties: properties);
             }

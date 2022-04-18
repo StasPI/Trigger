@@ -15,7 +15,7 @@
 	"vhosts": [ { "name": "/" } ],
 	"permissions": [
 		{
-			"user": "sa",
+			"user": "StasPI",
 			"vhost": "/",
 			"configure": ".*",
 			"write": ".*",

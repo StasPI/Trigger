@@ -4,6 +4,8 @@
     {
         public const string Name = "RabbitMQ";
         public string AppId { get; set; }
+        public string ContentType { get; set; }
+        public byte DeliveryMode { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string HostName { get; set; }
