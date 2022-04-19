@@ -19,23 +19,6 @@ services:
       - ./etc/rabbitmq/definitions.json:/opt/definitions.json:ro
       - ./etc/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
 
-#connection to server at "PostgreSQL" (172.21.0.3), port 5432
-  db:
-    restart: unless-stopped
-    image: postgres
-    container_name: PostgreSQL
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: StasPI
-      POSTGRES_DB: postgres
-      POSTGRES_PASSWORD: Password1
-    volumes:
-      #- postgres_data:/var/lib/postgresql/data
-      - type: bind
-        source: ./etc/postgresql/data
-        target: /var/lib/postgresql/data
-
 #UI http://localhost:5050/browser/
   pgadmin:
     restart: unless-stopped
@@ -48,8 +31,25 @@ services:
       PGADMIN_DEFAULT_PASSWORD: Password1
     volumes:
       - ./etc/pgadmin/servers.json:/pgadmin4/servers.json # preconfigured servers/connections
-      - ./etc/pgadmin/pgpass:/pgadmin4/pgpass # passwords for the connections in this file
+      - ./etc/pgadmin/pgpassfile:/pgadmin4/pgpassfile # passwords for the connections in this file
 
-volumes:
-  #postgres_data:
-  pgadmin-data:
+#connection string "Host=localhost;Port=5432;Database=postgres;Username=StasPI;Password=Password1"
+  db:
+    restart: unless-stopped
+    image: postgres
+    container_name: PostgreSQL
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: StasPI
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: Password1
+    #volumes:
+    #  - db:/var/lib/postgresql/data
+      #- type: bind
+      #  source: ./etc/postgresql/data
+      #  target: /var/lib/postgresql/data
+    #command: bash -c 'chmod 700 /var/lib/postgresql/data'
+
+#volumes:
+#  db:
