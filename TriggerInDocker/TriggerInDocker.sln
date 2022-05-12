@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trigger.Infrastructure", "Trigger.Infrastructure.csproj", "{E6F0DF29-23D1-4631-9BC7-46C95F6DC321}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriggerInDocker", "TriggerInDocker.csproj", "{E6F0DF29-23D1-4631-9BC7-46C95F6DC321}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

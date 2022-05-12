@@ -18,6 +18,8 @@ services:
     volumes:
       - ./etc/rabbitmq/definitions.json:/opt/definitions.json:ro
       - ./etc/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+    networks:
+      - trigger
 
 #UI http://localhost:5050/browser/
   pgadmin:
@@ -32,6 +34,8 @@ services:
     volumes:
       - ./etc/pgadmin/servers.json:/pgadmin4/servers.json # preconfigured servers/connections
       - ./etc/pgadmin/pgpassfile:/pgadmin4/pgpassfile # passwords for the connections in this file
+    networks:
+      - trigger
 
 #connection string "Host=localhost;Port=5432;Database=postgres;Username=StasPI;Password=Password1"
   db:
@@ -44,6 +48,8 @@ services:
       POSTGRES_USER: StasPI
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: Password1
+    networks:
+      - trigger
     #volumes:
     #  - db:/var/lib/postgresql/data
       #- type: bind
@@ -51,5 +57,30 @@ services:
       #  target: /var/lib/postgresql/data
     #command: bash -c 'chmod 700 /var/lib/postgresql/data'
 
+  RegistrationWebApi:
+    image: trigger/registration
+    build: 
+      context: ..
+      dockerfile: Registration\RegistrationWebApi\Dockerfile
+    container_name: RegistrationWebApi
+    ports:
+      - "8003:8003"
+      - "8002:8002"
+    environment:
+      ASPNETCORE_URLS: "http://+:8002"
+      #ASPNETCORE_URLS: "http://+:8002;https://+:8003"
+    networks:
+      - trigger
+    #  ASPNETCORE_HTTPS_PORT: "5003"
+    #  ASPNETCORE_Kestrel__Certificates__Default__Password: ${SSL_PASSWORD}
+    #  ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/EventDistributionGrpc.pfx"
+    #volumes:
+    #  - ${USERPROFILE}\.aspnet\https:/https:ro
+
 #volumes:
 #  db:
+
+networks: 
+   trigger:
+     external: true
+     name: trigger

@@ -33,7 +33,7 @@ namespace RabbitMQ
             }
             catch (Exception ex)
             {
-               _logger.LogError(ex, "Cannot dispose RabbitMQ channel or connection");
+               _logger.LogError(ex.Message, "Cannot dispose RabbitMQ channel or connection");
             }
         }
 
