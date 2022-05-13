@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Options;
 using RabbitMQ.Client;
 
 namespace RabbitMQ
@@ -8,32 +10,38 @@ namespace RabbitMQ
         protected IModel Channel { get; private set; }
         private IConnection _connection;
         private readonly ConnectionFactory _connectionFactory;
+        private readonly RabbitMQOptions _options;
         private readonly ILogger<RabbitMqClientBase> _logger;
 
-        protected RabbitMqClientBase(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger)
+        protected RabbitMqClientBase(ConnectionFactory connectionFactory, IOptions<RabbitMQOptions> options, ILogger<RabbitMqClientBase> logger)
         {
             _connectionFactory = connectionFactory;
+            _options = options.Value;
             _logger = logger;
             ConnectToRabbitMq();
         }
 
         private void ConnectToRabbitMq()
         {
-            try
+            while(_connection == null & Channel == null)
             {
-                if (_connection == null || _connection.IsOpen == false)
+                try
                 {
-                    _connection = _connectionFactory.CreateConnection();
-                }
+                    if (_connection == null || _connection.IsOpen == false)
+                    {
+                        _connection = _connectionFactory.CreateConnection();
+                    }
 
-                if (Channel == null || Channel.IsOpen == false)
-                {
-                    Channel = _connection.CreateModel();
+                    if (Channel == null || Channel.IsOpen == false)
+                    {
+                        Channel = _connection.CreateModel();
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-               _logger.LogError(ex.Message, "Cannot dispose RabbitMQ channel or connection");
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Cannot dispose RabbitMQ channel or connection");
+                    //Task.Delay(_options.ReconnectDelayMs);
+                }
             }
         }
 

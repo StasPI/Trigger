@@ -11,6 +11,7 @@
         public string HostName { get; set; }
         public int Port { get; set; }
         public string VirtualHost { get; set; }
+        public int ReconnectDelayMs { get; set; }
         public ProducerEventOptions ProducerEvent { get; set; }
         public ProducerReactionOptions ProducerReaction { get; set; }
     }

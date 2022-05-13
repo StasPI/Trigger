@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Options;
 using RabbitMQ.Abstraction;
 using RabbitMQ.Client;
 using System.Text;
@@ -15,8 +17,8 @@ namespace RabbitMQ
         protected abstract string ContentType { get; }
         protected abstract byte DeliveryMode { get; }
 
-        protected ProducerBase(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger, ILogger<ProducerBase<T>> producerBaseLogger)
-            : base(connectionFactory, logger) => _logger = producerBaseLogger;
+        protected ProducerBase(ConnectionFactory connectionFactory, IOptions<RabbitMQOptions> options, ILogger<RabbitMqClientBase> logger, ILogger<ProducerBase<T>> producerBaseLogger)
+            : base(connectionFactory, options, logger) => _logger = producerBaseLogger;
 
         public virtual void Publish(T @event)
         {

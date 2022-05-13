@@ -23,7 +23,7 @@ namespace Rabbit
 
         public ProducerEvent(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger,
             ILogger<ProducerBase<EventMessageBody>> producerBaseLogger, IOptions<RabbitMQOptions> options)
-            : base(connectionFactory, logger, producerBaseLogger)
+            : base(connectionFactory, options, logger, producerBaseLogger)
         {
             _options = options.Value;
             _exchangeName = _options.ProducerEvent.ExchangeName;

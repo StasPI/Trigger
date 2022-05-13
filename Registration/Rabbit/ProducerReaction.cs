@@ -22,7 +22,7 @@ namespace Rabbit
         protected override byte DeliveryMode => _deliveryMode;
         public ProducerReaction(ConnectionFactory connectionFactory, ILogger<RabbitMqClientBase> logger,
             ILogger<ProducerBase<ReactionMessageBody>> producerBaseLogger, IOptions<RabbitMQOptions> options)
-            : base(connectionFactory, logger, producerBaseLogger)
+            : base(connectionFactory, options, logger, producerBaseLogger)
         {
             _options = options.Value;
             _exchangeName = _options.ProducerReaction.ExchangeName;
